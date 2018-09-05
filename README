@@ -1,0 +1,5 @@
+usage: EFL_DIR=<root_efl_path> ./autogen.py testdir
+
+requirements:
+    *** the source tree must be already built ***
+    pyolian and testgen in efl scripts path
