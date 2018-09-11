@@ -1,5 +1,117 @@
-usage: EFL_DIR=<root_efl_path> ./autogen.py testdir
 
-requirements:
-    *** the source tree must be already built ***
-    pyolian and testgen in efl scripts path
+TCT automated: Template-based Eolian TCT tests generator
+===============================================================================
+
+TCT automated is a Python Script using the Testgen and Pyolian to generate TCT
+tests rendering templates with custom files, this can generate TCT tests to
+Emono eolian CSharp.
+
+
+Installation
+============
+
+You will need to use the `EFL_DIR` environment variable to TCTautomated can
+find Testgen classes and other eolian files
+
+Other requirement is that **the source EFL tree must be already built** (not
+installed) because pyolian search the eolian .so/.dll inside the source tree.
+
+If you built the efl tree in a custom location (fe, you build out-of-tree) you
+can tell pyolian where to find the built eolian .so files using the
+`EOLIAN_SO_DIR` environment variable.
+
+Optionally you can use `EFL_DIR` environment variable to define the efl root path
+
+
+Command line usage
+==================
+
+The simplest way to use the generator is from the command line, using the
+`autogen.py` command, the `--help` option state:
+
+usage: autogen.py [-h] [--name NAME] [--dir DIR] [--efl EFL]
+
+TCTautomated.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --name NAME, -n NAME  Suite name and where look custom files.
+  --dir DIR, -d DIR     Destination path to write generated files.
+  --efl EFL, -e EFL     Efl Root Path
+
+
+How customise a Generated Test
+==============================
+
+TCTautomate use the filesystem to find custom files if you need customise a test,
+add/write follow files in src/tests:
+
+ Suite  custom files
+ * `./<suitename>/`
+     |-> <suitename>_custom.cs   #add include files, functions or structs
+     |-> <suitename>_init.cs     #add code in SUITE_INIT 
+     |-> <suitename>_shutdown.cs #add code in SUITE_SHUTDOWN
+
+ Class Test case custom files
+ * `./<suitename>/<class_name>/`  #use lowercase and `_` separator
+     |-> custom.cs          #add include files, functions or structs
+     |-> init.cs            #add default way to create the object of this class
+     |-> shutdown.cs        #add default way to free the object
+     |-> criteria_custom.cs #change CRITERIA in constructor test
+
+Funtions Tests
+- Tests methodes custom files
+ * `./<suitename>/<class_name>/<method_name>/`
+     |-> arg_init.cs        #initialize method arguments (arg_<argument_name>)
+     |-> init.cs            #add how to create the object (replace default)
+     |-> arg_shutdown.cs    #free arguments
+     |-> shutdown.cs        #add how to free the object (replace default)
+     |-> criteria_custom.cs #change CRITERIA in this method test
+
+- Tests properties custom files
+ * `./<suitename>/<class_name>/<property_name>/`
+     |   -- Property Get --
+     |-> arg_get_init.cs        #initialize property get arguments (arg_<argument_name>)
+     |-> get_init.cs            #how to create the object (replace default)
+     |-> arg_get_shutdown.cs    #free arguments
+     |-> get_shutdown.cs        #how to free the object (replace default)
+     |-> get_criteria_custom.cs #change get property CRITERIA
+     |   -- Property Set --
+     |-> arg_set_init.cs        #initialize propety set arguments (arg_<argument_name>)
+     |-> set_init.cs            #how to create the object (replace default)
+     |-> arg_set_shutdown.cs    #free arguments
+     |-> set_shutdown.cs        #how to free the object (replace default)
+     |-> set_criteria_custom.cs #change set property CRITERIA
+
+to make some custom files you only need a code using:
+ `parent`     -> default name of parent object
+ `obj`        -> default name of current object
+ `arg_<name>` -> replace <name> with functions arguments name 
+
+you can use *custom.cs (suite or class) to add specilized code
+
+Some class or function test don't need a test in some Suite, you can disable test generated
+of it with a blank file as following:
+
+#use lowercase and `_` as separator
+`/<suitename>/<class_name>`  #don't generate test for <class_name>
+`/<suitename>/<class_name>/method_name` #don't generate test for <method_name>
+`/<suitename>/<class_name>/<property_name>` #don't generate test for this property
+`/<suitename>/<class_name>/<property_name>_get` #don't generate test for this property get
+`/<suitename>/<class_name>/<property_name>_set` #don't generate test for this property set
+
+Where to find more info
+=======================
+
+ * read the Pyolian README file in EFL scripts
+ * read the eolian.py file (it declare the full eolian API)
+ * read the generator.py file (it's super simple)
+ * read the original [pyratemp docs](https://www.simple-is-better.org/template/pyratemp.html)
+
+
+Note
+====
+
+This markdown file is mirrored in efl src tree (src/scripts/pyolian) and in
+phab wiki (phab.enlightenment.org/w/pyolian). Don't forget to update the other
+if you change one!

@@ -6,47 +6,30 @@ import sys
 import datetime
 from copy import copy
 import itertools
+import argparse
+
+parser = argparse.ArgumentParser(description='TCTautomated.')
+parser.add_argument('--name', '-n', default='tct', help='Test name and where look custom files.')
+parser.add_argument('--dir', '-d', default='tests', help='Destination path to write generated files.')
+parser.add_argument('--efl', '-e', default=None, help='Efl Root Path')
+parser.add_argument('--cls', '-c', default=None, help='Eolian Class')
+args = parser.parse_args()
+if not os.path.exists(args.dir):
+    os.makedirs(args.dir)
 
 script_path = os.path.dirname(os.path.realpath(__file__))
-
-if 'EFL_DIR' in os.environ:
-    root_path = os.environ['EFL_DIR']
-else:
-    root_path = os.path.abspath(os.path.join(script_path, '..', '..', '..'))
-
+root_path = args.efl if args.efl else os.environ['EFL_DIR'] if 'EFL_DIR' in os.environ else '.'
 sys.path.insert(0, os.path.join(root_path, 'src', 'scripts'))
 
-from pyolian import eolian
-from pyolian import pyratemp
-from testgen.suitegen import SuiteGen
-
-# Use .eo files from the source tree (not the installed ones)
-SCAN_FOLDER = os.path.join(root_path, 'src', 'lib')
-
-# create main eolian state
-eolian_db = eolian.Eolian_State()
-if not isinstance(eolian_db, eolian.Eolian_State):
-    raise(RuntimeError('Eolian, failed to create Eolian state'))
-
-# eolian source tree scan
-if not eolian_db.directory_add(SCAN_FOLDER):
-    raise(RuntimeError('Eolian, failed to scan source directory'))
-
-# Parse all known eo files
-if not eolian_db.all_eot_files_parse():
-    raise(RuntimeError('Eolian, failed to parse all EOT files'))
-
-if not eolian_db.all_eo_files_parse():
-    raise(RuntimeError('Eolian, failed to parse all EO files'))
-
-# cleanup the database on exit
-import atexit
-def cleanup_db():
-    global eolian_db
-    del eolian_db
-atexit.register(cleanup_db)
-
-blacklist = []
+try:
+    from pyolian import eolian
+    from pyolian import pyratemp
+    from testgen.suitegen import SuiteGen
+except ModuleNotFoundError:
+    print("Efl root path not found, use EFL_DIR environment variable with efl root path in your system\n")
+    parser.print_help()
+    exit()
+ 
 
 """
 It will find methods and functions with owned return and without other params
@@ -89,22 +72,49 @@ class Template(pyratemp.Template):
 
 
 if __name__ == '__main__':
-    import argparse
 
-    parser = argparse.ArgumentParser(description='TCTautomated.')
-    parser.add_argument('testdir', nargs='?', default='tests', help='The directory name to use.')
-    args = parser.parse_args()
-    testdir = os.path.join(script_path, args.testdir)
-    if not os.path.exists(testdir):
-        os.makedirs(testdir)
-
-    for eocls in eolian_db.classes:
+    def _load_class(eocls):
         if eocls and eocls.type == eocls.type.REGULAR and not eocls.name in blacklist:
-            name = eocls.name.replace(".", "_")
-            suite = SuiteGen('TCT', name, "{}/{}.cs".format(args.testdir, name), testdir, 'tct_suite.template')
+            name = '_'.join([args.name, eocls.name.replace(".", "_")])
+            suite = SuiteGen(args.name, name, "{}.cs".format(os.path.join(args.dir, name)), args.name, 'tct_suite.template')
             suite.loadObj(eocls)
             t = Template(suite.template)
             try:
                 t.render(suite)
             except:
                 print("ERROR RENDERING - Cannot create file: {}".format(suite.filename))
+
+    # Use .eo files from the source tree (not the installed ones)
+    SCAN_FOLDER = os.path.join(root_path, 'src', 'lib')
+
+    # create main eolian state
+    eolian_db = eolian.Eolian_State()
+    if not isinstance(eolian_db, eolian.Eolian_State):
+        raise(RuntimeError('Eolian, failed to create Eolian state'))
+
+    # eolian source tree scan
+    if not eolian_db.directory_add(SCAN_FOLDER):
+        raise(RuntimeError('Eolian, failed to scan source directory'))
+
+    # Parse all known eo files
+    if not eolian_db.all_eot_files_parse():
+        raise(RuntimeError('Eolian, failed to parse all EOT files'))
+
+    if not eolian_db.all_eo_files_parse():
+        raise(RuntimeError('Eolian, failed to parse all EO files'))
+
+    # cleanup the database on exit
+    import atexit
+    def cleanup_db():
+        global eolian_db
+        del eolian_db
+    atexit.register(cleanup_db)
+
+    blacklist = []
+    if args.cls:
+        eocls = eolian_db.class_by_name_get(args.cls)
+        _load_class(eocls)
+    else:
+        for eocls in eolian_db.classes:
+            _load_class(eocls);
+

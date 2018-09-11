@@ -1,6 +1,8 @@
 <!--(macro m_show)-->
  <!--(if mshow)-->
 ${mshow}$#!
+ <!--(elif exists("mdefault"))-->
+${mdefault}$
  <!--(end)-->
 <!--(end)-->
 <!--(macro def_obj)-->${'.'.join(param.type.namespaces).lower()}$.I${param.type.short_name}$ arg_${param.name}$ = null;<!--(end)-->
@@ -61,7 +63,7 @@ ${cls.shutdown}$
         [Description("Create a ${cls.name}$.")]
         [Property("SPEC", "${suite.name}$.${cls.name}$ C")]
         [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "CONSTR")]
+${m_show(mshow=cls.criteria_custom,mdefault='        [Property("CRITERIA", "CONSTR")]')}$#!
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
         public void ${cls.name}$_CONSTRUCTOR_TEST()
         {
@@ -75,7 +77,7 @@ ${cls.shutdown}$
         [Description("Calling method ${func.name}$.")]
         [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ MR")]
         [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "MR")]
+${m_show(mshow=func.criteria_custom,mdefault='        [Property("CRITERIA", "MR")]')}$#!
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
         public void ${func.name}$_METHOD_CALL()
         {
@@ -94,13 +96,13 @@ ${m_show(mshow=func.shutdown)}$#!
  <!--(end)-->
 #!  PROPERTIES FUNCTION GET
  <!--(for func in cls.properties)-->
-  <!--(if func.getter_scope == func.getter_scope.PUBLIC)-->
+  <!--(if func.has_getter)-->
         [Test]
         [Category("P1")]
         [Description("Calling Property Get ${func.name}$.")]
         [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ A")]
         [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "PRO")]
+${m_show(mshow=func.get_criteria_custom,mdefault='        [Property("CRITERIA", "PRO")]')}$#!
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
         public void ${func.name}$_PROPERTY_GET()
         {
@@ -128,13 +130,13 @@ ${m_show(mshow=func.get_shutdown)}$#!
 
   <!--(end)-->
 #!  PROPERTIES FUNCTION SET
-  <!--(if func.setter_scope == func.setter_scope.PUBLIC)-->
+  <!--(if func.has_setter)-->
         [Test]
         [Category("P1")]
         [Description("Calling Property Set ${func.name}$.")]
         [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ A")]
         [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "PRW")]
+${m_show(mshow=func.set_criteria_custom,mdefault='        [Property("CRITERIA", "PRW")]')}$#!
         [Property("AUTHOR", "AutomaTest Boot, automated@tst")]
         public void ${func.name}$_PROPERTY_SET()
         {
