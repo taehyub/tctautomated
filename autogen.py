@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.join(root_path, 'src', 'scripts'))
 try:
     from pyolian import eolian
     from pyolian import pyratemp
-    from testgen.suitegen import SuiteGen
+    from testgen import suitegen
 except ModuleNotFoundError:
     print("Efl root path not found, use EFL_DIR environment variable with efl root path in your system\n")
     parser.print_help()
@@ -34,6 +34,15 @@ except ModuleNotFoundError:
 """
 It will find methods and functions with owned return and without other params
 """
+
+@property
+def func_has_enum(self):
+    r = ()
+    for v in self.comp.getter_values or []:
+        if v.type.typedecl and v.type.typedecl.type == eolian.Eolian_Typedecl_Type.ENUM:
+            r = v, *r
+    return r
+
 
 class Template(pyratemp.Template):
 
@@ -76,7 +85,7 @@ if __name__ == '__main__':
     def _load_class(eocls):
         if eocls and eocls.type == eocls.type.REGULAR and not eocls.name in blacklist:
             name = '_'.join([args.name, eocls.name.replace(".", "_")])
-            suite = SuiteGen(args.name, name, "{}.cs".format(os.path.join(args.dir, name)), args.name, 'tct_suite.template')
+            suite = suitegen.SuiteGen(args.name, name, "{}.cs".format(os.path.join(args.dir, name)), args.name, 'tct_suite.template')
             suite.loadObj(eocls)
             t = Template(suite.template)
             try:
@@ -110,9 +119,13 @@ if __name__ == '__main__':
         del eolian_db
     atexit.register(cleanup_db)
 
+    suitegen.FuncItem.has_enum = func_has_enum
+
     blacklist = []
     if args.cls:
         eocls = eolian_db.class_by_name_get(args.cls)
+        if not eocls:
+            print("Eolian class {} Not found!!".format(args.cls))
         _load_class(eocls)
     else:
         for eocls in eolian_db.classes:
