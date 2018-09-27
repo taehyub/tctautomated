@@ -60,7 +60,7 @@ ${cls.shutdown}$
 
  <!--(if cls.init)-->
         [Test]
-        [Category("P1")]
+        [Category("P2")]
         [Description("Create a ${cls.name}$.")]
         [Property("SPEC", "${suite.name}$.${cls.name}$ C")]
         [Property("SPEC_URL", "-")]
@@ -68,7 +68,7 @@ ${cls.shutdown}$
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
         public void ${cls.name}$_CONSTRUCTOR_TEST()
         {
-            Assert.Throws<ArgmentException>(() => new ${'.'.join(cls.namespaces).lower()}$.${cls.short_name}$(););
+            Assert.Throws<efl.EflException>(() => new ${'.'.join(cls.namespaces).lower()}$.${cls.short_name}$(););
         }
  <!--(end)-->
 
@@ -95,19 +95,16 @@ ${m_show(mshow=func.criteria_custom,mdefault='        [Property("CRITERIA", "MR"
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
         public void ${func.name}$_METHOD_CALL()
         {
-   <!--(if len(list(func.parameters)) > 0)-->
 ${def_params(parameters=func.parameters)}$
-   <!--(end)-->
 ${m_show(mshow=func.arg_init)}$#!
 ${m_show(mshow=func.init)}$#!
             /* CALLING METHOD  */
             <!--(if func.method_return_type)-->var r = <!--(end)-->${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$);
-
 ${m_show(mshow=func.arg_shutdown)}$#!
 ${m_show(mshow=func.shutdown)}$#!
         }
+   <!--(for argenum in filter(func.is_enum, func.parameters))-->
 
-    <!--(for argenum in func.has_enum)-->
         [Test]
         [Category("P1")]
         [Description("Calling method Enum ${func.name}$.")]
@@ -118,21 +115,64 @@ ${m_show(mshow=func.shutdown)}$#!
      <!--(for field in argenum.type.typedecl.enum_fields)-->
         public void ${func.name}$_ENUM_${field.c_name}$()
         {
-   <!--(if len(list(func.parameters)) > 0)-->
 ${def_params(parameters=func.parameters)}$
-   <!--(end)-->
 ${m_show(mshow=func.arg_init)}$#!
 ${m_show(mshow=func.init)}$#!
             /* CALLING METHOD  */
             arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${field.c_name}$;
             <!--(if func.method_return_type)-->var r = <!--(end)-->${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$);
-
 ${m_show(mshow=func.arg_shutdown)}$#!
 ${m_show(mshow=func.shutdown)}$#!
         }
      <!--(end)-->
-    <!--(end)-->
- <!--(end)-->
+   <!--(end)-->
+   <!--(if next(filter(func.is_number, func.parameters), False))-->
+
+        [Test]
+        [Category("P1")]
+        [Description("Calling method in Range ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ M")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "MAR")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${func.name}$_IN_RANGE ()
+        {
+${def_params(parameters=func.parameters)}$
+${m_show(mshow=func.arg_init)}$#!
+${m_show(mshow=func.init)}$#!
+     <!--(if func.irange_init)-->
+${m_show(mshow=func.irange_init)}$#!
+     <!--(else)-->
+       <!--(for arg in filter(func.is_number, func.parameters))-->
+            arg_${arg.name}$ = 1;
+       <!--(end)-->
+     <!--(end)-->
+            /* CALLING METHOD  */
+            <!--(if func.method_return_type)-->var r = <!--(end)-->${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$);
+
+${m_show(mshow=func.arg_shutdown)}$#!
+${m_show(mshow=func.shutdown)}$#!
+        }
+        public void ${func.name}$_OUT_OF_RANGE ()
+        {
+${def_params(parameters=func.parameters)}$
+${m_show(mshow=func.arg_init)}$#!
+${m_show(mshow=func.init)}$#!
+     <!--(if func.orange_init)-->
+${m_show(mshow=func.orange_init)}$#!
+     <!--(else)-->
+       <!--(for arg in filter(func.is_number, func.parameters))-->
+            arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MaxValue;
+       <!--(end)-->
+     <!--(end)-->
+            /* CALLING METHOD  */
+            <!--(if func.method_return_type)-->var r = <!--(end)-->${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$);
+${m_show(mshow=func.arg_shutdown)}$#!
+${m_show(mshow=func.shutdown)}$#!
+        }
+
+   <!--(end)-->
+ <!--(end)--> #!  METHODS END
 #!  PROPERTIES FUNCTION GET
  <!--(for func in cls.properties)-->
   <!--(if func.has_getter)-->
@@ -145,21 +185,15 @@ ${m_show(mshow=func.get_criteria_custom,mdefault='        [Property("CRITERIA", 
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
         public void ${func.name}$_PROPERTY_GET()
         {
-   <!--(if len(list(func.getter_values)) > 1)-->
-${def_params(parameters=func.getter_values)}$
-   <!--(end)-->
-   <!--(if len(list(func.getter_keys)) > 0)-->
-${def_params(parameters=func.getter_keys)}$
-   <!--(end)-->
+${def_params(parameters=func.getter_args)}$
 ${m_show(mshow=func.arg_get_init)}$#!
 ${m_show(mshow=func.get_init)}$#!
             /* CALLING PROPERTY  */
    <!--(if len(list(func.getter_values)) == 1)-->
-            var arg_${list(func.getter_values)[0].name}$ = ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
+            arg_${list(func.getter_values)[0].name}$ = ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
    <!--(else)-->
             ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
    <!--(end)-->
-
    <!--(for p in func.getter_values)-->
             Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
             Assert.IsInstanceOf<${suite.type_convert(p.type)}$>(arg_${p.name}$);
@@ -167,7 +201,8 @@ ${m_show(mshow=func.get_init)}$#!
 ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
         }
-    <!--(for argenum in func.has_enum)-->
+
+    <!--(for argenum in filter(func.is_enum, func.getter_keys))-->
         [Test]
         [Category("P1")]
         [Description("Calling Property Get Enum ${func.name}$.")]
@@ -178,22 +213,16 @@ ${m_show(mshow=func.get_shutdown)}$#!
      <!--(for field in argenum.type.typedecl.enum_fields)-->
         public void ${func.name}$_ENUM_GET_${field.c_name}$()
         {
-       <!--(if len(list(func.getter_values)) > 1)-->
-${def_params(parameters=func.getter_values)}$
-       <!--(end)-->
-       <!--(if len(list(func.getter_keys)) > 0)-->
-${def_params(parameters=func.getter_keys)}$
-       <!--(end)-->
+${def_params(parameters=func.getter_args)}$
 ${m_show(mshow=func.arg_get_init)}$#!
 ${m_show(mshow=func.get_init)}$#!
             /* CALLING PROPERTY  */
             arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${field.c_name}$;
         <!--(if len(list(func.getter_values)) == 1)-->
-            var arg_${list(func.getter_values)[0].name}$ = ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
+            arg_${list(func.getter_values)[0].name}$ = ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
         <!--(else)-->
             ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
         <!--(end)-->
-
         <!--(for p in func.getter_values)-->
             Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
         <!--(end)-->
@@ -202,7 +231,71 @@ ${m_show(mshow=func.get_shutdown)}$#!
         }
      <!--(end)-->
     <!--(end)-->
+    <!--(if next(filter(func.is_number, func.getter_keys), False))-->
+        [Test]
+        [Category("P1")]
+        [Description("Calling Property Get Max Value ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_get A")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "PMAX")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${func.name}$_get_MAX_VALUE()
+        {
+${def_params(parameters=func.getter_args)}$
+${m_show(mshow=func.arg_get_init)}$#!
+${m_show(mshow=func.get_init)}$#!
+     <!--(if func.max_init)-->
+${m_show(mshow=func.max_init)}$#!
+     <!--(else)-->
+       <!--(for arg in filter(func.is_number, func.getter_keys))-->
+            arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MaxValue;
+       <!--(end)-->
+     <!--(end)-->
+            /* CALLING PROPERTY  */
+       <!--(if len(list(func.getter_values)) == 1)-->
+            arg_${list(func.getter_values)[0].name}$ = ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
+       <!--(else)-->
+            ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
+       <!--(end)-->
+       <!--(for p in func.getter_values)-->
+            Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
+       <!--(end)-->
+${m_show(mshow=func.arg_get_shutdown)}$#!
+${m_show(mshow=func.get_shutdown)}$#!
+        }
 
+        [Test]
+        [Category("P1")]
+        [Description("Calling Property Get Min Value ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_get A")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "PMIN")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${func.name}$_get_MIN_VALUE()
+        {
+${def_params(parameters=func.getter_args)}$
+${m_show(mshow=func.arg_get_init)}$#!
+${m_show(mshow=func.get_init)}$#!
+     <!--(if func.min_init)-->
+${m_show(mshow=func.min_init)}$#!
+     <!--(else)-->
+       <!--(for arg in filter(func.is_number, func.getter_keys))-->
+            arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MinValue;
+       <!--(end)-->
+     <!--(end)-->
+            /* CALLING PROPERTY  */
+       <!--(if len(list(func.getter_values)) == 1)-->
+            arg_${list(func.getter_values)[0].name}$ = ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
+       <!--(else)-->
+            ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
+       <!--(end)-->
+       <!--(for p in func.getter_values)-->
+            Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
+       <!--(end)-->
+${m_show(mshow=func.arg_get_shutdown)}$#!
+${m_show(mshow=func.get_shutdown)}$#!
+        }
+    <!--(end)-->
   <!--(end)-->
 #!  PROPERTIES FUNCTION SET
   <!--(if func.has_setter)-->
@@ -215,20 +308,16 @@ ${m_show(mshow=func.set_criteria_custom,mdefault='        [Property("CRITERIA", 
         [Property("AUTHOR", "AutomaTest Boot, automated@tst")]
         public void ${func.name}$_PROPERTY_SET()
         {
-${def_params(parameters=func.setter_values)}$
-   <!--(if len(list(func.setter_keys)) > 0)-->
-${def_params(parameters=func.setter_keys)}$
-   <!--(end)-->
+${def_params(parameters=func.setter_args)}$
 ${m_show(mshow=func.arg_set_init)}$#!
 ${m_show(mshow=func.set_init)}$#!
             /* CALLING PROPERTY  */
             ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$);
-
 ${m_show(mshow=func.arg_set_shutdown)}$#!
 ${m_show(mshow=func.set_shutdown)}$#!
         }
 
-    <!--(for argenum in func.has_enum)-->
+    <!--(for argenum in filter(func.is_enum, func.setter_keys))-->
         [Test]
         [Category("P1")]
         [Description("Calling Property Set Enum ${func.name}$.")]
@@ -239,20 +328,67 @@ ${m_show(mshow=func.set_shutdown)}$#!
      <!--(for field in argenum.type.typedecl.enum_fields)-->
         public void ${func.name}$_ENUM_SET_${field.c_name}$()
         {
-${def_params(parameters=func.setter_values)}$
-   <!--(if len(list(func.setter_keys)) > 0)-->
-${def_params(parameters=func.setter_keys)}$
-   <!--(end)-->
+${def_params(parameters=func.setter_args)}$
 ${m_show(mshow=func.arg_set_init)}$#!
 ${m_show(mshow=func.set_init)}$#!
-            /* CALLING PROPERTY  */
             arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${field.c_name}$;
+            /* CALLING PROPERTY  */
             ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$);
-
 ${m_show(mshow=func.arg_set_shutdown)}$#!
 ${m_show(mshow=func.set_shutdown)}$#!
         }
      <!--(end)-->
+    <!--(end)-->
+    <!--(if next(filter(func.is_number, func.setter_keys), False))-->
+        [Test]
+        [Category("P1")]
+        [Description("Calling Property Set Max Value ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_set A")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "PMAX")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${func.name}$_set_MAX_VALUE()
+        {
+${def_params(parameters=func.setter_args)}$
+${m_show(mshow=func.arg_set_init)}$#!
+${m_show(mshow=func.set_init)}$#!
+     <!--(if func.max_init)-->
+${m_show(mshow=func.max_init)}$#!
+     <!--(else)-->
+       <!--(for arg in filter(func.is_number, func.setter_keys))-->
+            arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MaxValue;
+       <!--(end)-->
+     <!--(end)-->
+            /* CALLING PROPERTY  */
+            ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$);
+${m_show(mshow=func.arg_get_shutdown)}$#!
+${m_show(mshow=func.get_shutdown)}$#!
+        }
+
+        [Test]
+        [Category("P1")]
+        [Description("Calling Property Set Min Value ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_set A")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "PMIN")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${func.name}$_set_MIN_VALUE()
+        {
+${def_params(parameters=func.setter_args)}$
+${m_show(mshow=func.arg_set_init)}$#!
+${m_show(mshow=func.set_init)}$#!
+     <!--(if func.min_init)-->
+${m_show(mshow=func.min_init)}$#!
+     <!--(else)-->
+       <!--(for arg in filter(func.is_number, func.setter_keys))-->
+            arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MinValue;
+       <!--(end)-->
+     <!--(end)-->
+            /* CALLING PROPERTY  */
+            ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$);
+${m_show(mshow=func.arg_get_shutdown)}$#!
+${m_show(mshow=func.get_shutdown)}$#!
+        }
     <!--(end)-->
 
   <!--(end)-->
