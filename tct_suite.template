@@ -390,8 +390,28 @@ ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
         }
     <!--(end)-->
-
   <!--(end)-->
+ <!--(end)-->
+ <!--(for event in cls.events)-->
+
+        [Test]
+        [Category("P1")]
+        [Description("Calling Property Set Min Value ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${event.myname}$ A")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "EVENT")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public async task ${event.c_name.lower()}$_CHECK_EVENT()
+        {
+${m_show(mshow=event.init)}$#!
+            obj.${event.format_name}$ += (object sender, ${event.format_name}$_Args e) => {
+${m_show(mshow=event.custom)}$#!
+     <!--(if event.type)-->
+                Assert.IsInstanceOf<${suite.type_convert(event.type)}$>(e.arg);
+     <!--(end)-->
+            };
+${m_show(mshow=event.shutdown)}$#!
+        }
  <!--(end)-->
 }
 <!--(end)-->
