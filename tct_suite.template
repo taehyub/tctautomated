@@ -410,7 +410,11 @@ ${m_show(mshow=event.custom)}$#!
                 Assert.IsInstanceOf<${suite.type_convert(event.type)}$>(e.arg);
      <!--(end)-->
             };
+     <!--(if not event.shutdown)-->
+            await Task.Delay(1000);
+     <!--(else)-->
 ${m_show(mshow=event.shutdown)}$#!
+     <!--(end)-->
         }
  <!--(end)-->
 }
