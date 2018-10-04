@@ -137,7 +137,7 @@ if __name__ == "__main__":
 
     atexit.register(cleanup_db)
 
-    blacklist = []
+    blacklist = ["Ecore.Audio.Out.Pulse", "Ecore.Audio.Out.Sndfile", "Ecore.Audio.Out.Wasapi", "Ecore.Audio.In.Tone", "Ecore.Audio.In.Sndfile", "Ecore.Event.Message", "Ecore.Event.Message.Handler", "Efl.Ui.Internal.Text.Interactive"]
     if args.cls:
         eocls = eolian_db.class_by_name_get(args.cls)
         if not eocls:

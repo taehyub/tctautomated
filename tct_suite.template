@@ -17,9 +17,19 @@ ${mdefault}$
 <!--(macro meth_target)-->
  <!--(if func.is_class)-->${'.'.join(cls.namespaces).lower()}$.${cls.short_name}$<!--(else)-->obj<!--(end)-->
 <!--(end)-->
+<!--(macro callget)-->
+  <!--(if not func.getter_return_type and len(list(func.getter_values)) == 1)-->
+            arg_${list(func.getter_values)[0].name}$ = ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
+  <!--(else)-->
+            ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
+  <!--(end)-->
+<!--(end)-->
+
+
 using System;
-using NUnit.Framework;
-using NUnit.Framework.TUnit;
+using System.Threading.Tasks;
+//using NUnit.Framework;
+//using NUnit.Framework.TUnit;
 
 namespace ${suite.name}$.Tests {
 
@@ -66,7 +76,7 @@ ${cls.shutdown}$
         [Property("SPEC_URL", "-")]
         [Property("CRITERIA", "CONSTN")]
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public void ${cls.name}$_CONSTRUCTOR_TEST()
+        public void ${cls.name.replace(".", "_")}$_CONSTRUCTOR_TEST()
         {
             Assert.Throws<efl.EflException>(() => new ${'.'.join(cls.namespaces).lower()}$.${cls.short_name}$(););
         }
@@ -79,7 +89,7 @@ ${cls.shutdown}$
         [Property("SPEC_URL", "-")]
 ${m_show(mshow=cls.criteria_custom,mdefault='        [Property("CRITERIA", "CONSTR")]')}$#!
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public void ${cls.name}$_CONSTRUCTOR_TEST()
+        public void ${cls.name.replace(".", "_")}$_CONSTRUCTOR_TEST()
         {
             Assert.IsInstanceOf<${'.'.join(cls.namespaces).lower()}$.${cls.short_name}$>(obj, "Should Return ${'.'.join(cls.namespaces).lower()}$.${cls.short_name}$ Instance");
         }
@@ -189,11 +199,7 @@ ${def_params(parameters=func.getter_args)}$
 ${m_show(mshow=func.arg_get_init)}$#!
 ${m_show(mshow=func.get_init)}$#!
             /* CALLING PROPERTY  */
-   <!--(if len(list(func.getter_values)) == 1)-->
-            arg_${list(func.getter_values)[0].name}$ = ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
-   <!--(else)-->
-            ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
-   <!--(end)-->
+${callget()}$
    <!--(for p in func.getter_values)-->
             Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
             Assert.IsInstanceOf<${suite.type_convert(p.type)}$>(arg_${p.name}$);
@@ -211,18 +217,14 @@ ${m_show(mshow=func.get_shutdown)}$#!
         [Property("CRITERIA", "MAE")]
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
      <!--(for field in argenum.type.typedecl.enum_fields)-->
-        public void ${func.name}$_ENUM_GET_${field.c_name}$()
+        public void ${func.name}$_${argenum.name}$_ENUM_GET_${field.c_name}$()
         {
 ${def_params(parameters=func.getter_args)}$
 ${m_show(mshow=func.arg_get_init)}$#!
 ${m_show(mshow=func.get_init)}$#!
             /* CALLING PROPERTY  */
             arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${field.c_name}$;
-        <!--(if len(list(func.getter_values)) == 1)-->
-            arg_${list(func.getter_values)[0].name}$ = ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
-        <!--(else)-->
-            ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
-        <!--(end)-->
+${callget()}$
         <!--(for p in func.getter_values)-->
             Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
         <!--(end)-->
@@ -252,11 +254,7 @@ ${m_show(mshow=func.max_init)}$#!
        <!--(end)-->
      <!--(end)-->
             /* CALLING PROPERTY  */
-       <!--(if len(list(func.getter_values)) == 1)-->
-            arg_${list(func.getter_values)[0].name}$ = ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
-       <!--(else)-->
-            ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
-       <!--(end)-->
+${callget()}$
        <!--(for p in func.getter_values)-->
             Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
        <!--(end)-->
@@ -284,17 +282,59 @@ ${m_show(mshow=func.min_init)}$#!
        <!--(end)-->
      <!--(end)-->
             /* CALLING PROPERTY  */
-       <!--(if len(list(func.getter_values)) == 1)-->
-            arg_${list(func.getter_values)[0].name}$ = ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
-       <!--(else)-->
-            ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
-       <!--(end)-->
+${callget()}$
        <!--(for p in func.getter_values)-->
             Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
        <!--(end)-->
 ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
         }
+     <!--(if func.pam_init)-->
+        [Test]
+        [Category("P1")]
+        [Description("Calling Property Get Over Max Value ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_get A")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "PAM")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${func.name}$_get_OVER_MAX_VALUE()
+        {
+${def_params(parameters=func.getter_args)}$
+${m_show(mshow=func.arg_get_init)}$#!
+${m_show(mshow=func.get_init)}$#!
+${m_show(mshow=func.pam_init)}$#!
+            /* CALLING PROPERTY  */
+${callget()}$
+       <!--(for p in func.getter_values)-->
+            Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
+       <!--(end)-->
+${m_show(mshow=func.arg_get_shutdown)}$#!
+${m_show(mshow=func.get_shutdown)}$#!
+        }
+     <!--(end)-->
+     <!--(if func.pbm_init)-->
+        [Test]
+        [Category("P1")]
+        [Description("Calling Property Get Below Min Value ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_get A")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "PBM")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${func.name}$_get_BELOW_MIN_VALUE()
+        {
+${def_params(parameters=func.getter_args)}$
+${m_show(mshow=func.arg_get_init)}$#!
+${m_show(mshow=func.get_init)}$#!
+${m_show(mshow=func.pbm_init)}$#!
+            /* CALLING PROPERTY  */
+${callget()}$
+       <!--(for p in func.getter_values)-->
+            Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
+       <!--(end)-->
+${m_show(mshow=func.arg_get_shutdown)}$#!
+${m_show(mshow=func.get_shutdown)}$#!
+        }
+     <!--(end)-->
     <!--(end)-->
   <!--(end)-->
 #!  PROPERTIES FUNCTION SET
@@ -401,7 +441,7 @@ ${m_show(mshow=func.get_shutdown)}$#!
         [Property("SPEC_URL", "-")]
         [Property("CRITERIA", "EVENT")]
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public async task ${event.c_name.lower()}$_CHECK_EVENT()
+        public async Task ${event.c_name.lower()}$_CHECK_EVENT()
         {
 ${m_show(mshow=event.init)}$#!
             obj.${event.format_name}$ += (object sender, ${event.format_name}$_Args e) => {
