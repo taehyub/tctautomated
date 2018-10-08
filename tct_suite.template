@@ -123,7 +123,7 @@ ${m_show(mshow=func.shutdown)}$#!
         [Property("CRITERIA", "MAE")]
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
      <!--(for field in argenum.type.typedecl.enum_fields)-->
-        public void ${func.name}$_ENUM_${field.c_name}$()
+        public void ${func.name}$_${argenum.name}$_ENUM_${field.c_name}$()
         {
 ${def_params(parameters=func.parameters)}$
 ${m_show(mshow=func.arg_init)}$#!
@@ -366,7 +366,7 @@ ${m_show(mshow=func.set_shutdown)}$#!
         [Property("CRITERIA", "MAE")]
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
      <!--(for field in argenum.type.typedecl.enum_fields)-->
-        public void ${func.name}$_ENUM_SET_${field.c_name}$()
+        public void ${func.name}$_${argenum.name}$_ENUM_SET_${field.c_name}$()
         {
 ${def_params(parameters=func.setter_args)}$
 ${m_show(mshow=func.arg_set_init)}$#!
