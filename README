@@ -60,7 +60,7 @@ add/write follow files in src/tests:
      |-> criteria_custom.cs #change CRITERIA in constructor test
 
 Funtions Tests
-- Tests methodes custom files
+- Tests methods custom files
  * `./<suitename>/<class_name>/<method_name>/`
      |-> arg_init.cs        #initialize method arguments (arg_<argument_name>)
      |-> init.cs            #add how to create the object (replace default)
@@ -82,6 +82,29 @@ Funtions Tests
      |-> arg_set_shutdown.cs    #free arguments
      |-> set_shutdown.cs        #how to free the object (replace default)
      |-> set_criteria_custom.cs #change set property CRITERIA
+
+Event Tests
+- Tests Events custom files
+ * `./<suitename>/<class_name>/<event_name>/`
+     |-> init.cs            #add how to initialize the objects
+     |-> custom.cs          #add customizations in callback
+     |-> shutdown.cs        #add shutdown or any method to call the event
+
+Criteria Special criteria custom Tests
+- Criteria MAE tests custom files
+ * `./<suitename>/<class_name>/<function_name>/`
+     |-> irange_init.cs        #initialize in range MAR custom args (or use default value)
+     |-> orange_init.cs        #initialize out of range MAR custom args (or use MaxValue)
+
+ - Criteria PMAX/PMIN tests custom files
+ * `./<suitename>/<class_name>/<function_name>/`
+     |-> pmax_init.cs        #initialize PMAX custom args (or use MinValue)
+     |-> pmin_init.cs        #initialize PMIN custom args (or use MaxValue)
+
+ - Criteria PAM/PBM tests custom files
+ * `./<suitename>/<class_name>/<function_name>/`
+     |-> pam_init.cs        #initialize PAM custom args (or use MinValue)
+     |-> pbm_init.cs        #initialize PBM custom args (or use MaxValue)
 
 to make some custom files you only need a code using:
  `parent`     -> default name of parent object
