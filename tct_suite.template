@@ -113,6 +113,25 @@ ${m_show(mshow=func.init)}$#!
 ${m_show(mshow=func.arg_shutdown)}$#!
 ${m_show(mshow=func.shutdown)}$#!
         }
+
+        [Test]
+        [Category("P2")]
+        [Description("Calling method ${func.name}$ Exception.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ M")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "MEX")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${func.name}$_METHOD_EXCEPTION()
+        {
+${def_params(parameters=func.parameters)}$
+${m_show(mshow=func.mex_arg_init)}$#!
+${m_show(mshow=func.mex_init)}$#!
+            /* CALLING METHOD  */
+            Assert.Throws<efl.EflException>(() => ${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$));
+${m_show(mshow=func.mex_arg_shutdown)}$#!
+${m_show(mshow=func.mex_shutdown)}$#!
+        }
+
    <!--(for argenum in filter(func.is_enum, func.parameters))-->
 
         [Test]
@@ -206,6 +225,24 @@ ${callget()}$
    <!--(end)-->
 ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
+        }
+
+        [Test]
+        [Category("P2")]
+        [Description("Calling Property Get EXCEPTON ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ A")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "PEX")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${func.name}$_PROPERTY_GET_EXCEPTION()
+        {
+${def_params(parameters=func.getter_args)}$
+${m_show(mshow=func.pexg_arg_init)}$#!
+${m_show(mshow=func.pexg_init)}$#!
+            /* CALLING PROPERTY  */
+            Assert.Throws<efl.EflException>(() => ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$));
+${m_show(mshow=func.pexg_arg_shutdown)}$#!
+${m_show(mshow=func.pexg_shutdown)}$#!
         }
 
     <!--(for argenum in filter(func.is_enum, func.getter_keys))-->
@@ -356,6 +393,26 @@ ${m_show(mshow=func.set_init)}$#!
 ${m_show(mshow=func.arg_set_shutdown)}$#!
 ${m_show(mshow=func.set_shutdown)}$#!
         }
+
+        [Test]
+        [Category("P2")]
+        [Description("Calling Property Set EXCEPTON ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ A")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "PEX")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${func.name}$_PROPERTY_SET_EXCEPTION()
+        {
+${def_params(parameters=func.setter_args)}$
+${m_show(mshow=func.pexs_arg_init)}$#!
+${m_show(mshow=func.pexs_init)}$#!
+            /* CALLING PROPERTY  */
+            Assert.Throws<efl.EflException>(() => ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$));
+${m_show(mshow=func.pexs_arg_shutdown)}$#!
+${m_show(mshow=func.pexs_shutdown)}$#!
+        }
+
+
 
     <!--(for argenum in filter(func.is_enum, func.setter_keys))-->
         [Test]

@@ -106,6 +106,21 @@ Criteria Special criteria custom Tests
      |-> pam_init.cs        #initialize PAM custom args (or use MinValue)
      |-> pbm_init.cs        #initialize PBM custom args (or use MaxValue)
 
+ - Criteria PEX/MEX tests custom files
+ * `./<suitename>/<class_name>/<function_name>/`
+     |-> mex_init.cs            #initialize MEX custom init
+     |-> mex_shutdown.cs        #initialize MEX custom shutdown
+     |-> mex_arg_init.cs        #initialize MEX custom args
+     |-> mex_arg_shutdown.cs    #initialize MEX custom args shutdown
+     |-> pexg_init.cs           #initialize PEX GET custom init
+     |-> pexg_shutdown.cs       #initialize PEX GET custom shutdown
+     |-> pexg_arg_init.cs       #initialize PEX GET custom args
+     |-> pexg_arg_shutdown.cs   #initialize PEX GET custom args shutdown
+     |-> pexs_init.cs           #initialize PEX SET custom init
+     |-> pexs_shutdown.cs       #initialize PEX SET custom shutdown
+     |-> pexs_arg_init.cs       #initialize PEX SET custom args
+     |-> pexs_arg_shutdown.cs   #initialize PEX SET custom args shutdown
+
 to make some custom files you only need a code using:
  `parent`     -> default name of parent object
  `obj`        -> default name of current object
