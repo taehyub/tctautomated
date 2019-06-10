@@ -142,13 +142,13 @@ ${m_show(mshow=func.mex_shutdown)}$#!
         [Property("CRITERIA", "MAE")]
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
      <!--(for field in argenum.type.typedecl.enum_fields)-->
-        public void ${func.name}$_${argenum.name}$_ENUM_${field.c_name}$()
+        public void ${func.name}$_${argenum.name}$_ENUM_${field.c_constant}$()
         {
 ${def_params(parameters=func.parameters)}$
 ${m_show(mshow=func.arg_init)}$#!
 ${m_show(mshow=func.init)}$#!
             /* CALLING METHOD  */
-            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${field.c_name}$;
+            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${field.c_constant}$;
             <!--(if func.method_return_type)-->var r = <!--(end)-->${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$);
 ${m_show(mshow=func.arg_shutdown)}$#!
 ${m_show(mshow=func.shutdown)}$#!
@@ -254,13 +254,13 @@ ${m_show(mshow=func.pexg_shutdown)}$#!
         [Property("CRITERIA", "MAE")]
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
      <!--(for field in argenum.type.typedecl.enum_fields)-->
-        public void ${func.name}$_${argenum.name}$_ENUM_GET_${field.c_name}$()
+        public void ${func.name}$_${argenum.name}$_ENUM_GET_${field.c_constant}$()
         {
 ${def_params(parameters=func.getter_args)}$
 ${m_show(mshow=func.arg_get_init)}$#!
 ${m_show(mshow=func.get_init)}$#!
             /* CALLING PROPERTY  */
-            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${field.c_name}$;
+            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${field.c_constant}$;
 ${callget()}$
         <!--(for p in func.getter_values)-->
             Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
@@ -423,12 +423,12 @@ ${m_show(mshow=func.pexs_shutdown)}$#!
         [Property("CRITERIA", "MAE")]
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
      <!--(for field in argenum.type.typedecl.enum_fields)-->
-        public void ${func.name}$_${argenum.name}$_ENUM_SET_${field.c_name}$()
+        public void ${func.name}$_${argenum.name}$_ENUM_SET_${field.c_constant}$()
         {
 ${def_params(parameters=func.setter_args)}$
 ${m_show(mshow=func.arg_set_init)}$#!
 ${m_show(mshow=func.set_init)}$#!
-            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${field.c_name}$;
+            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${field.c_constant}$;
             /* CALLING PROPERTY  */
             ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$);
 ${m_show(mshow=func.arg_set_shutdown)}$#!
@@ -498,7 +498,7 @@ ${m_show(mshow=func.get_shutdown)}$#!
         [Property("SPEC_URL", "-")]
         [Property("CRITERIA", "EVENT")]
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public async Task ${event.c_name.lower()}$_CHECK_EVENT()
+        public async Task ${event.c_macro.lower()}$_CHECK_EVENT()
         {
 ${m_show(mshow=event.init)}$#!
             obj.${event.format_name}$ += (object sender, ${event.format_name}$_Args e) => {
