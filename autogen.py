@@ -17,6 +17,7 @@ parser.add_argument(
 )
 parser.add_argument("--efl", "-e", default=None, help="Efl Root Path")
 parser.add_argument("--cls", "-c", default=None, help="Eolian Class")
+parser.add_argument("--verbose", "-v", default=False, action="store_true")
 args = parser.parse_args()
 if not os.path.exists(args.dir):
     os.makedirs(args.dir)
@@ -31,7 +32,10 @@ try:
     from pyolian import eolian
     from pyolian import pyratemp
     from testgen import suitegen
-except ModuleNotFoundError:
+    from testgen import name_helpers
+except ModuleNotFoundError as ex:
+    if args.verbose:
+        print(ex)
     print(
         "Efl root path not found, use EFL_DIR environment variable with efl root path in your system\n"
     )
@@ -80,6 +84,7 @@ class Template(pyratemp.Template):
         # Build the context for the template
         ctx = {}
         ctx["suite"] = suite
+        ctx["name_helpers"] = name_helpers
         # render with the augmented context
         output = self(**ctx)
 
