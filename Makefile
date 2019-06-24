@@ -3,3 +3,6 @@ tctautomated_efl_mono.dll: tests/*.cs
 
 tests/*.cs:
 	./autogen.py
+
+clean:
+	rm -rf tests/*.cs
