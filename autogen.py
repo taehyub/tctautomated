@@ -173,6 +173,14 @@ if __name__ == "__main__":
         "Efl.Ui.Model_State",
         "Efl.Ui.Popup_Part_Backwall",
         "Efl.Ui.View_List_Precise_Layouter",
+        "Efl.Ui.Average_Model",
+        "Efl.Ui.Exact_Model",
+        "Efl.Ui.Homogeneous_Model",
+        "Efl.Ui.Size_Model",
+        "Efl.Ui.State_Model",
+        "Efl.Ui.List_View_Precise_Layouter",
+        "Efl.Ui.Internal_Text_Scroller",
+        "Efl.Ui.Selection_Manager",
     ]
     nsbl = [
         "Elm",
