@@ -91,7 +91,7 @@ ${m_show(mshow=cls.criteria_custom,mdefault='        [Property("CRITERIA", "CONS
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
         public void ${cls.name.replace(".", "_")}$_CONSTRUCTOR_TEST()
         {
-            Assert.IsInstanceOf<${'.'.join(cls.namespaces).lower()}$.${cls.short_name}$>(obj, "Should Return ${'.'.join(cls.namespaces).lower()}$.${cls.short_name}$ Instance");
+            Assert.IsInstanceOf<${name_helpers.class_managed_name(cls)}$>(obj, "Should Return ${name_helpers.class_managed_name(cls)}$ Instance");
         }
 #!  METHODS
  <!--(for func in cls.methods)-->
