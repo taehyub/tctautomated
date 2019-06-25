@@ -148,7 +148,7 @@ ${def_params(parameters=func.parameters)}$
 ${m_show(mshow=func.arg_init)}$#!
 ${m_show(mshow=func.init)}$#!
             /* CALLING METHOD  */
-            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${field.c_constant}$;
+            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${name_helpers.enum_field_managed_name(field)}$;
             <!--(if func.method_return_type)-->var r = <!--(end)-->${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$);
 ${m_show(mshow=func.arg_shutdown)}$#!
 ${m_show(mshow=func.shutdown)}$#!
@@ -240,7 +240,7 @@ ${def_params(parameters=func.getter_args)}$
 ${m_show(mshow=func.pexg_arg_init)}$#!
 ${m_show(mshow=func.pexg_init)}$#!
             /* CALLING PROPERTY  */
-            Assert.Throws<Efl.EflException>(() => ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$));
+            Assert.Throws<Efl.EflException>(() => { ${callget()}$ } );
 ${m_show(mshow=func.pexg_arg_shutdown)}$#!
 ${m_show(mshow=func.pexg_shutdown)}$#!
         }
@@ -260,7 +260,7 @@ ${def_params(parameters=func.getter_args)}$
 ${m_show(mshow=func.arg_get_init)}$#!
 ${m_show(mshow=func.get_init)}$#!
             /* CALLING PROPERTY  */
-            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${field.c_constant}$;
+            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${name_helpers.enum_field_managed_name(field)}$;
 ${callget()}$
         <!--(for p in func.getter_values)-->
             Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
@@ -428,7 +428,7 @@ ${m_show(mshow=func.pexs_shutdown)}$#!
 ${def_params(parameters=func.setter_args)}$
 ${m_show(mshow=func.arg_set_init)}$#!
 ${m_show(mshow=func.set_init)}$#!
-            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${field.c_constant}$;
+            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${name_helpers.enum_field_managed_name(field)}$;
             /* CALLING PROPERTY  */
             ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$);
 ${m_show(mshow=func.arg_set_shutdown)}$#!
@@ -501,7 +501,7 @@ ${m_show(mshow=func.get_shutdown)}$#!
         public async Task ${event.c_macro.lower()}$_CHECK_EVENT()
         {
 ${m_show(mshow=event.init)}$#!
-            obj.${event.format_name}$ += (object sender, ${event.format_name}$_Args e) => {
+            obj.${name_helpers.event_managed_short_name(event)}$ += (object sender, ${name_helpers.event_args_managed_name(event, cls)}$ e) => {
 ${m_show(mshow=event.custom)}$#!
      <!--(if event.type)-->
                 Assert.IsInstanceOf<${suite.type_convert(event.type)}$>(e.arg);
