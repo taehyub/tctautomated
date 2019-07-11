@@ -234,24 +234,6 @@ ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
         }
 
-        [Test]
-        [Category("P2")]
-        [Description("Calling Property Get EXCEPTON ${func.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ A")]
-        [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "PEX")]
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public void ${func.name}$_PROPERTY_GET_EXCEPTION()
-        {
-${def_params(parameters=func.getter_args)}$
-${m_show(mshow=func.pexg_arg_init)}$#!
-${m_show(mshow=func.pexg_init)}$#!
-            /* CALLING PROPERTY  */
-            Assert.Throws<Efl.EflException>(() => { ${callget()}$ } );
-${m_show(mshow=func.pexg_arg_shutdown)}$#!
-${m_show(mshow=func.pexg_shutdown)}$#!
-        }
-
     <!--(for argenum in filter(func.is_enum, func.getter_keys))-->
         [Test]
         [Category("P1")]
@@ -400,26 +382,6 @@ ${m_show(mshow=func.set_init)}$#!
 ${m_show(mshow=func.arg_set_shutdown)}$#!
 ${m_show(mshow=func.set_shutdown)}$#!
         }
-
-        [Test]
-        [Category("P2")]
-        [Description("Calling Property Set EXCEPTON ${func.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ A")]
-        [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "PEX")]
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public void ${func.name}$_PROPERTY_SET_EXCEPTION()
-        {
-${def_params(parameters=func.setter_args)}$
-${m_show(mshow=func.pexs_arg_init)}$#!
-${m_show(mshow=func.pexs_init)}$#!
-            /* CALLING PROPERTY  */
-            Assert.Throws<Efl.EflException>(() => ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$));
-${m_show(mshow=func.pexs_arg_shutdown)}$#!
-${m_show(mshow=func.pexs_shutdown)}$#!
-        }
-
-
 
     <!--(for argenum in filter(func.is_enum, func.setter_keys))-->
         [Test]
