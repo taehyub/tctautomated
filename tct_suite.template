@@ -5,13 +5,13 @@ ${mshow}$#!
 ${mdefault}$
  <!--(end)-->
 <!--(end)-->
-<!--(macro def_obj)-->${name_helpers.class_managed_name(param.type.class_)}$ arg_${param.name}$ = null;<!--(end)-->
+<!--(macro def_obj)-->${name_helpers.class_managed_name(param.type.class_)}$ ${prefix}$${param.name}$ = null;<!--(end)-->
 <!--(macro def_param)-->
- <!--(if param.type.type == param.type.type.CLASS)-->${def_obj(param=param)}$<!--(else)-->${suite.type_convert(param.type)}$ arg_${param.name}$ = default(${suite.type_convert(param.type)}$);<!--(end)-->
+ <!--(if param.type.type == param.type.type.CLASS)-->${def_obj(param=param, prefix=prefix)}$<!--(else)-->${suite.type_convert(param.type)}$ ${prefix}$${param.name}$ = default(${suite.type_convert(param.type)}$);<!--(end)-->
 <!--(end)-->
 <!--(macro def_params)-->
  <!--(for p in parameters)-->
-           ${def_param(param=p)}$
+           ${def_param(param=p, prefix=default("prefix", "arg_"))}$
  <!--(end)-->
 <!--(end)-->
 <!--(macro meth_target)-->
@@ -19,9 +19,9 @@ ${mdefault}$
 <!--(end)-->
 <!--(macro callget)-->
   <!--(if not func.getter_return_type and len(list(func.getter_values)) == 1)-->
-            arg_${list(func.getter_values)[0].name}$ = ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['arg_{}'.format(param.name) for param in func.getter_keys])}$);
+            get_arg_${list(func.getter_values)[0].name}$ = ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['get_arg_{}'.format(param.name) for param in func.getter_keys])}$);
   <!--(else)-->
-            ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join([suite.print_arg(p) for p in func.getter_keys] + ['out arg_{}'.format(p.name) for p in func.getter_values])}$);
+            ${meth_target(func=func, cls=cls)}$.Get${func.format_name}$(${', '.join(['get_arg_{}'.format(p.name) for p in func.getter_keys] + ['out get_arg_{}'.format(p.name) for p in func.getter_values])}$);
   <!--(end)-->
 <!--(end)-->
 
@@ -221,7 +221,7 @@ ${m_show(mshow=func.get_criteria_custom,mdefault='        [Property("CRITERIA", 
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
         public void ${func.name}$_PROPERTY_GET()
         {
-${def_params(parameters=func.getter_args)}$
+${def_params(parameters=func.getter_args, prefix="get_arg_")}$
 ${m_show(mshow=func.arg_get_init)}$#!
 ${m_show(mshow=func.get_init)}$#!
             /* CALLING PROPERTY  */
@@ -234,8 +234,8 @@ ${callget()}$
                 Assert.Fail("Should not throw exception. " + ex.ToString());
             }
    <!--(for p in func.getter_values)-->
-            Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
-            Assert.IsInstanceOf<${suite.type_convert(p.type)}$>(arg_${p.name}$);
+            Assert.NotNull(get_arg_${p.name}$, "${p.name}$ should be readable");
+            Assert.IsInstanceOf<${suite.type_convert(p.type)}$>(get_arg_${p.name}$);
    <!--(end)-->
 ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
@@ -252,14 +252,14 @@ ${m_show(mshow=func.get_shutdown)}$#!
      <!--(for field in argenum.type.typedecl.enum_fields)-->
         public void ${func.name}$_${argenum.name}$_ENUM_GET_${field.c_constant}$()
         {
-${def_params(parameters=func.getter_args)}$
+${def_params(parameters=func.getter_args, prefix="get_arg_")}$
 ${m_show(mshow=func.arg_get_init)}$#!
 ${m_show(mshow=func.get_init)}$#!
             /* CALLING PROPERTY  */
-            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${name_helpers.enum_field_managed_name(field)}$;
+            get_arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${name_helpers.enum_field_managed_name(field)}$;
 ${callget()}$
         <!--(for p in func.getter_values)-->
-            Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
+            Assert.NotNull(get_arg_${p.name}$, "${p.name}$ should be readable");
         <!--(end)-->
 ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
@@ -276,20 +276,20 @@ ${m_show(mshow=func.get_shutdown)}$#!
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
         public void ${func.name}$_get_MAX_VALUE()
         {
-${def_params(parameters=func.getter_args)}$
+${def_params(parameters=func.getter_args, prefix="get_arg_")}$
 ${m_show(mshow=func.arg_get_init)}$#!
 ${m_show(mshow=func.get_init)}$#!
      <!--(if func.pmax_init)-->
 ${m_show(mshow=func.pmax_init)}$#!
      <!--(else)-->
        <!--(for arg in filter(func.is_number, func.getter_keys))-->
-            arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MaxValue;
+            get_arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MaxValue;
        <!--(end)-->
      <!--(end)-->
             /* CALLING PROPERTY  */
 ${callget()}$
        <!--(for p in func.getter_values)-->
-            Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
+            Assert.NotNull(get_arg_${p.name}$, "${p.name}$ should be readable");
        <!--(end)-->
 ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
@@ -304,20 +304,20 @@ ${m_show(mshow=func.get_shutdown)}$#!
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
         public void ${func.name}$_get_MIN_VALUE()
         {
-${def_params(parameters=func.getter_args)}$
+${def_params(parameters=func.getter_args, prefix="get_arg_")}$
 ${m_show(mshow=func.arg_get_init)}$#!
 ${m_show(mshow=func.get_init)}$#!
      <!--(if func.pmin_init)-->
 ${m_show(mshow=func.pmin_init)}$#!
      <!--(else)-->
        <!--(for arg in filter(func.is_number, func.getter_keys))-->
-            arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MinValue;
+            get_arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MinValue;
        <!--(end)-->
      <!--(end)-->
             /* CALLING PROPERTY  */
 ${callget()}$
        <!--(for p in func.getter_values)-->
-            Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
+            Assert.NotNull(get_arg_${p.name}$, "${p.name}$ should be readable");
        <!--(end)-->
 ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
@@ -332,14 +332,14 @@ ${m_show(mshow=func.get_shutdown)}$#!
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
         public void ${func.name}$_get_OVER_MAX_VALUE()
         {
-${def_params(parameters=func.getter_args)}$
+${def_params(parameters=func.getter_args, prefix="get_arg_")}$
 ${m_show(mshow=func.arg_get_init)}$#!
 ${m_show(mshow=func.get_init)}$#!
 ${m_show(mshow=func.pam_init)}$#!
             /* CALLING PROPERTY  */
 ${callget()}$
        <!--(for p in func.getter_values)-->
-            Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
+            Assert.NotNull(get_arg_${p.name}$, "${p.name}$ should be readable");
        <!--(end)-->
 ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
@@ -355,14 +355,14 @@ ${m_show(mshow=func.get_shutdown)}$#!
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
         public void ${func.name}$_get_BELOW_MIN_VALUE()
         {
-${def_params(parameters=func.getter_args)}$
+${def_params(parameters=func.getter_args, prefix="get_arg_")}$
 ${m_show(mshow=func.arg_get_init)}$#!
 ${m_show(mshow=func.get_init)}$#!
 ${m_show(mshow=func.pbm_init)}$#!
             /* CALLING PROPERTY  */
 ${callget()}$
        <!--(for p in func.getter_values)-->
-            Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
+            Assert.NotNull(get_arg_${p.name}$, "${p.name}$ should be readable");
        <!--(end)-->
 ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
