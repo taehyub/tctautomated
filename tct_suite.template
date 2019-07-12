@@ -225,7 +225,14 @@ ${def_params(parameters=func.getter_args)}$
 ${m_show(mshow=func.arg_get_init)}$#!
 ${m_show(mshow=func.get_init)}$#!
             /* CALLING PROPERTY  */
+            try
+            {
 ${callget()}$
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Should not throw exception. " + ex.ToString());
+            }
    <!--(for p in func.getter_values)-->
             Assert.NotNull(arg_${p.name}$, "${p.name}$ should be readable");
             Assert.IsInstanceOf<${suite.type_convert(p.type)}$>(arg_${p.name}$);
