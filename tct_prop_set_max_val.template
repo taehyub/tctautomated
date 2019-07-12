@@ -1,0 +1,24 @@
+        [Test]
+        [Category("P1")]
+        [Description("Calling Property Set Max Value ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_set A")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "PMAX")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${func.name}$_set_MAX_VALUE()
+        {
+${def_params(parameters=func.setter_args)}$
+${m_show(mshow=func.arg_set_init)}$#!
+${m_show(mshow=func.set_init)}$#!
+     <!--(if func.pmax_init)-->
+${m_show(mshow=func.pmax_init)}$#!
+     <!--(else)-->
+       <!--(for arg in filter(func.is_number, func.setter_keys))-->
+            arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MaxValue;
+       <!--(end)-->
+     <!--(end)-->
+            /* CALLING PROPERTY  */
+            ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$);
+${m_show(mshow=func.arg_get_shutdown)}$#!
+${m_show(mshow=func.get_shutdown)}$#!
+        }

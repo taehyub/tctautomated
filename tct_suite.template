@@ -441,82 +441,22 @@ ${m_show(mshow=func.set_shutdown)}$#!
      <!--(end)-->
     <!--(end)-->
     <!--(if next(filter(func.is_number, func.setter_keys), False))-->
-        [Test]
-        [Category("P1")]
-        [Description("Calling Property Set Max Value ${func.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_set A")]
-        [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "PMAX")]
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public void ${func.name}$_set_MAX_VALUE()
-        {
-${def_params(parameters=func.setter_args)}$
-${m_show(mshow=func.arg_set_init)}$#!
-${m_show(mshow=func.set_init)}$#!
-     <!--(if func.pmax_init)-->
-${m_show(mshow=func.pmax_init)}$#!
-     <!--(else)-->
-       <!--(for arg in filter(func.is_number, func.setter_keys))-->
-            arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MaxValue;
-       <!--(end)-->
-     <!--(end)-->
-            /* CALLING PROPERTY  */
-            ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$);
-${m_show(mshow=func.arg_get_shutdown)}$#!
-${m_show(mshow=func.get_shutdown)}$#!
-        }
 
-        [Test]
-        [Category("P1")]
-        [Description("Calling Property Set Min Value ${func.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_set A")]
-        [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "PMIN")]
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public void ${func.name}$_set_MIN_VALUE()
-        {
-${def_params(parameters=func.setter_args)}$
-${m_show(mshow=func.arg_set_init)}$#!
-${m_show(mshow=func.set_init)}$#!
-     <!--(if func.pmin_init)-->
-${m_show(mshow=func.pmin_init)}$#!
-     <!--(else)-->
-       <!--(for arg in filter(func.is_number, func.setter_keys))-->
-            arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MinValue;
-       <!--(end)-->
-     <!--(end)-->
-            /* CALLING PROPERTY  */
-            ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$);
-${m_show(mshow=func.arg_get_shutdown)}$#!
-${m_show(mshow=func.get_shutdown)}$#!
-        }
+        <!--(include)-->
+        tct_prop_set_max_val.template
+        <!--(end)-->
+
+        <!--(include)-->
+        tct_prop_set_min_val.template
+        <!--(end)-->
+
     <!--(end)-->
   <!--(end)-->
  <!--(end)-->
  <!--(for event in cls.events)-->
-
-        [Test]
-        [Category("P1")]
-        [Description("Calling Event ${event.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$.${event.myname}$ A")]
-        [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "EVENT")]
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public async Task ${event.c_macro.lower()}$_CHECK_EVENT()
-        {
-${m_show(mshow=event.init)}$#!
-            obj.${name_helpers.event_managed_short_name(event)}$ += (object sender, ${name_helpers.event_args_managed_name(event, cls)}$ e) => {
-${m_show(mshow=event.custom)}$#!
-     <!--(if event.type)-->
-                Assert.IsInstanceOf<${suite.type_convert(event.type)}$>(e.arg);
-     <!--(end)-->
-            };
-     <!--(if not event.shutdown)-->
-            await Task.Delay(1000);
-     <!--(else)-->
-${m_show(mshow=event.shutdown)}$#!
-     <!--(end)-->
-        }
+         <!--(include)-->
+         tct_event.template
+         <!--(end)-->
  <!--(end)-->
 }
 <!--(end)-->
