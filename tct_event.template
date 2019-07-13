@@ -1,0 +1,22 @@
+        [Test]
+        [Category("P1")]
+        [Description("Calling Event ${event.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${event.myname}$ A")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "EVENT")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public async Task ${event.c_macro.lower()}$_CHECK_EVENT()
+        {
+${m_show(mshow=event.init)}$#!
+            obj.${name_helpers.event_managed_short_name(event)}$ += (object sender, ${name_helpers.event_args_managed_name(event, cls)}$ e) => {
+${m_show(mshow=event.custom)}$#!
+     <!--(if event.type)-->
+                Assert.IsInstanceOf<${suite.type_convert(event.type)}$>(e.arg);
+     <!--(end)-->
+            };
+     <!--(if not event.shutdown)-->
+            await Task.Delay(1000);
+     <!--(else)-->
+${m_show(mshow=event.shutdown)}$#!
+     <!--(end)-->
+        }
