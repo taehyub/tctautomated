@@ -1,0 +1,46 @@
+        [Test]
+        [Category("P1")]
+        [Description("Calling Property Set ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ A")]
+        [Property("SPEC_URL", "-")]
+${m_show(mshow=func.set_criteria_custom,mdefault='        [Property("CRITERIA", "PRW")]')}$#!
+        [Property("AUTHOR", "AutomaTest Boot, automated@tst")]
+        public void ${func.name}$_PROPERTY_SET()
+        {
+${def_params(parameters=func.setter_args)}$
+${m_show(mshow=func.arg_set_init)}$#!
+${m_show(mshow=func.set_init)}$#!
+            /* SETTING PROPERTY  */
+            try
+            {
+            ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Should not throw exception. " + ex.ToString());
+            }
+            /* GETTING PROPERTY */
+${def_params(parameters=func.getter_args, prefix="get_arg_")}$
+${m_show(mshow=func.arg_get_init)}$#!
+${m_show(mshow=func.get_init)}$#!
+            /* CALLING PROPERTY  */
+            try
+            {
+${callget()}$
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Should not throw exception. " + ex.ToString());
+            }
+   <!--(for p in func.getter_values)-->
+            Assert.NotNull(get_arg_${p.name}$, "${p.name}$ should be readable");
+            Assert.IsInstanceOf<${suite.type_convert(p.type)}$>(get_arg_${p.name}$);
+   <!--(end)-->
+
+${m_show(mshow=func.arg_get_shutdown)}$#!
+${m_show(mshow=func.get_shutdown)}$#!
+
+${m_show(mshow=func.arg_set_shutdown)}$#!
+${m_show(mshow=func.set_shutdown)}$#!
+        }
+

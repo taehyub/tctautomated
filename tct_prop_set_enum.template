@@ -1,0 +1,20 @@
+        [Test]
+        [Category("P1")]
+        [Description("Calling Property Set Enum ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_set M")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "MAE")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+     <!--(for field in argenum.type.typedecl.enum_fields)-->
+        public void ${func.name}$_${argenum.name}$_ENUM_SET_${field.c_constant}$()
+        {
+${def_params(parameters=func.setter_args)}$
+${m_show(mshow=func.arg_set_init)}$#!
+${m_show(mshow=func.set_init)}$#!
+            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${name_helpers.enum_field_managed_name(field)}$;
+            /* CALLING PROPERTY  */
+            ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$);
+${m_show(mshow=func.arg_set_shutdown)}$#!
+${m_show(mshow=func.set_shutdown)}$#!
+        }
+     <!--(end)-->

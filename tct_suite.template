@@ -346,99 +346,25 @@ ${m_show(mshow=func.get_shutdown)}$#!
         }
      <!--(end)-->
      <!--(if func.pbm_init)-->
-        [Test]
-        [Category("P1")]
-        [Description("Calling Property Get Below Min Value ${func.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_get A")]
-        [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "PBM")]
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public void ${func.name}$_get_BELOW_MIN_VALUE()
-        {
-${def_params(parameters=func.getter_args, prefix="get_arg_")}$
-${m_show(mshow=func.arg_get_init)}$#!
-${m_show(mshow=func.get_init)}$#!
-${m_show(mshow=func.pbm_init)}$#!
-            /* CALLING PROPERTY  */
-${callget()}$
-       <!--(for p in func.getter_values)-->
-            Assert.NotNull(get_arg_${p.name}$, "${p.name}$ should be readable");
+       <!--(include)-->
+       tct_prop_get_below_min_value.template
        <!--(end)-->
-${m_show(mshow=func.arg_get_shutdown)}$#!
-${m_show(mshow=func.get_shutdown)}$#!
-        }
      <!--(end)-->
     <!--(end)-->
   <!--(end)-->
 #!  PROPERTIES FUNCTION SET
-  <!--(if func.has_setter and func.has_getter)-->
-        [Test]
-        [Category("P1")]
-        [Description("Calling Property Set ${func.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ A")]
-        [Property("SPEC_URL", "-")]
-${m_show(mshow=func.set_criteria_custom,mdefault='        [Property("CRITERIA", "PRW")]')}$#!
-        [Property("AUTHOR", "AutomaTest Boot, automated@tst")]
-        public void ${func.name}$_PROPERTY_SET()
-        {
-${def_params(parameters=func.setter_args)}$
-${m_show(mshow=func.arg_set_init)}$#!
-${m_show(mshow=func.set_init)}$#!
-            /* SETTING PROPERTY  */
-            try
-            {
-            ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$);
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail("Should not throw exception. " + ex.ToString());
-            }
-            /* GETTING PROPERTY */
-${def_params(parameters=func.getter_args, prefix="get_arg_")}$
-${m_show(mshow=func.arg_get_init)}$#!
-${m_show(mshow=func.get_init)}$#!
-            /* CALLING PROPERTY  */
-            try
-            {
-${callget()}$
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail("Should not throw exception. " + ex.ToString());
-            }
-   <!--(for p in func.getter_values)-->
-            Assert.NotNull(get_arg_${p.name}$, "${p.name}$ should be readable");
-            Assert.IsInstanceOf<${suite.type_convert(p.type)}$>(get_arg_${p.name}$);
-   <!--(end)-->
+  <!--(if func.has_setter)-->
 
-${m_show(mshow=func.arg_get_shutdown)}$#!
-${m_show(mshow=func.get_shutdown)}$#!
-
-${m_show(mshow=func.arg_set_shutdown)}$#!
-${m_show(mshow=func.set_shutdown)}$#!
-        }
+    <!--(if func.has_getter)-->
+      <!--(include)-->
+      tct_prop_set_get.template
+      <!--(end)-->
+    <!--(end)-->
 
     <!--(for argenum in filter(func.is_enum, func.setter_keys))-->
-        [Test]
-        [Category("P1")]
-        [Description("Calling Property Set Enum ${func.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_set M")]
-        [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "MAE")]
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-     <!--(for field in argenum.type.typedecl.enum_fields)-->
-        public void ${func.name}$_${argenum.name}$_ENUM_SET_${field.c_constant}$()
-        {
-${def_params(parameters=func.setter_args)}$
-${m_show(mshow=func.arg_set_init)}$#!
-${m_show(mshow=func.set_init)}$#!
-            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${name_helpers.enum_field_managed_name(field)}$;
-            /* CALLING PROPERTY  */
-            ${meth_target(func=func, cls=cls)}$.Set${func.format_name}$(${', '.join([suite.print_arg(p) for p in list(func.setter_keys) + list(func.setter_values)])}$);
-${m_show(mshow=func.arg_set_shutdown)}$#!
-${m_show(mshow=func.set_shutdown)}$#!
-        }
-     <!--(end)-->
+        <!--(include)-->
+        tct_prop_set_enum.template
+        <!--(end)-->
     <!--(end)-->
     <!--(if next(filter(func.is_number, func.setter_keys), False))-->
 
