@@ -52,27 +52,27 @@ ${m_show(mshow=cls.custom)}$#!
  <!--(end)-->
 
  <!--(if cls.init)-->
- tct_constructor_null.template
+ CONSTN_constructor_null.template
  <!--(end)-->
  <!--(include)-->
- tct_constructor.template
+ CONSTR_constructor.template
  <!--(end)-->
 #!  METHODS
  <!--(for func in cls.methods)-->
    <!--(include)-->
-   tct_method_call.template
+   MR_method_call.template
    <!--(end)-->
    <!--(include)-->
-   tct_method_exception.template
+   MEX_method_exception.template
    <!--(end)-->
    <!--(for argenum in filter(func.is_enum, func.parameters))-->
      <!--(include)-->
-     tct_method_enum.template
+     MAE_method_enum.template
      <!--(end)-->
    <!--(end)-->
    <!--(if next(filter(func.is_number, func.parameters), False))-->
      <!--(include)-->
-     tct_method_in_out_range.template
+     MAR_method_in_out_range.template
      <!--(end)-->
    <!--(end)-->
  <!--(end)--> #!  METHODS END
@@ -80,28 +80,28 @@ ${m_show(mshow=cls.custom)}$#!
  <!--(for func in cls.properties)-->
   <!--(if func.has_getter)-->
     <!--(include)-->
-    tct_prop_get_value.template
+    PRO_prop_get_value.template
     <!--(end)-->
     <!--(for argenum in filter(func.is_enum, func.getter_keys))-->
        <!--(include)-->
-       tct_prop_get_enum.template
+       PRE_prop_get_enum.template
        <!--(end)-->
     <!--(end)-->
     <!--(if next(filter(func.is_number, func.getter_keys), False))-->
      <!--(include)-->
-     tct_prop_get_max_value.template
+     PMAX_prop_get_max_value.template
      <!--(end)-->
      <!--(include)-->
-     tct_prop_get_min_value.template
+     PMIN_prop_get_min_value.template
      <!--(end)-->
      <!--(if func.pam_init)-->
        <!--(include)-->
-       tct_prop_get_above_max_value.template
+       PAM_prop_get_above_max_value.template
        <!--(end)-->
      <!--(end)-->
      <!--(if func.pbm_init)-->
        <!--(include)-->
-       tct_prop_get_below_min_value.template
+       PBM_prop_get_below_min_value.template
        <!--(end)-->
      <!--(end)-->
     <!--(end)-->
@@ -111,23 +111,23 @@ ${m_show(mshow=cls.custom)}$#!
 
     <!--(if func.has_getter)-->
       <!--(include)-->
-      tct_prop_set_get.template
+      PRW_prop_set_get.template
       <!--(end)-->
     <!--(end)-->
 
     <!--(for argenum in filter(func.is_enum, func.setter_keys))-->
         <!--(include)-->
-        tct_prop_set_enum.template
+        MAE_prop_set_enum.template
         <!--(end)-->
     <!--(end)-->
     <!--(if next(filter(func.is_number, func.setter_keys), False))-->
 
         <!--(include)-->
-        tct_prop_set_max_val.template
+        PMAX_prop_set_max_val.template
         <!--(end)-->
 
         <!--(include)-->
-        tct_prop_set_min_val.template
+        PMIN_prop_set_min_val.template
         <!--(end)-->
 
     <!--(end)-->
@@ -135,7 +135,7 @@ ${m_show(mshow=cls.custom)}$#!
  <!--(end)-->
  <!--(for event in cls.events)-->
          <!--(include)-->
-         tct_event.template
+         EVENT_event.template
          <!--(end)-->
  <!--(end)-->
 }
