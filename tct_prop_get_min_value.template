@@ -1,0 +1,27 @@
+        [Test]
+        [Category("P1")]
+        [Description("Calling Property Get Min Value ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_get A")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "PMIN")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${func.name}$_get_MIN_VALUE()
+        {
+${def_params(parameters=func.getter_args, prefix="get_arg_")}$
+${m_show(mshow=func.arg_get_init)}$#!
+${m_show(mshow=func.get_init)}$#!
+     <!--(if func.pmin_init)-->
+${m_show(mshow=func.pmin_init)}$#!
+     <!--(else)-->
+       <!--(for arg in filter(func.is_number, func.getter_keys))-->
+            get_arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MinValue;
+       <!--(end)-->
+     <!--(end)-->
+            /* CALLING PROPERTY  */
+${callget()}$
+       <!--(for p in func.getter_values)-->
+            Assert.NotNull(get_arg_${p.name}$, "${p.name}$ should be readable");
+       <!--(end)-->
+${m_show(mshow=func.arg_get_shutdown)}$#!
+${m_show(mshow=func.get_shutdown)}$#!
+        }
