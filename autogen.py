@@ -40,7 +40,7 @@ except ModuleNotFoundError as ex:
         "Efl root path not found, use EFL_DIR environment variable with efl root path in your system\n"
     )
     parser.print_help()
-    exit()
+    sys.exit(-1)
 
 
 """
