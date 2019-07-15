@@ -1,0 +1,13 @@
+        [TearDown]
+        public static void Destroy()
+        {
+            /* LogUtils.Write(LogUtils.DEBUG , LogUtils.TAG , "Postconditions for each TEST"); */
+${m_show(mshow=suite.shutdown)}$#!
+ <!--(if cls.shutdown)-->
+${cls.shutdown}$
+ <!--(else)-->
+            obj.Dispose();
+            obj = null;
+ <!--(end)-->
+        }
+

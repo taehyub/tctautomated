@@ -1,0 +1,12 @@
+
+        [SetUp]
+        public static void Init()
+        {
+            /* LogUtils.Write(LogUtils.DEBUG , LogUtils.TAG , "Preconditions for each TEST"); */
+${m_show(mshow=suite.init)}$#!
+ <!--(if cls.init)-->
+${cls.init}$
+ <!--(else)-->
+            obj = new ${name_helpers.class_managed_name(cls)}$(null${suite.constructor_params(cls)}$);
+ <!--(end)-->
+        }

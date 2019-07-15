@@ -43,258 +43,54 @@ ${m_show(mshow=suite.custom)}$#!
         private static ${name_helpers.class_managed_name(cls)}$ obj;
 ${m_show(mshow=cls.custom)}$#!
 
-        [SetUp]
-        public static void Init()
-        {
-            /* LogUtils.Write(LogUtils.DEBUG , LogUtils.TAG , "Preconditions for each TEST"); */
-${m_show(mshow=suite.init)}$#!
- <!--(if cls.init)-->
-${cls.init}$
- <!--(else)-->
-            obj = new ${name_helpers.class_managed_name(cls)}$(null${suite.constructor_params(cls)}$);
+ <!--(include)-->
+ tct_setup.template
  <!--(end)-->
-        }
 
-        [TearDown]
-        public static void Destroy()
-        {
-            /* LogUtils.Write(LogUtils.DEBUG , LogUtils.TAG , "Postconditions for each TEST"); */
-${m_show(mshow=suite.shutdown)}$#!
- <!--(if cls.shutdown)-->
-${cls.shutdown}$
- <!--(else)-->
-            obj.Dispose();
-            obj = null;
+ <!--(include)-->
+ tct_teardown.template
  <!--(end)-->
-        }
 
  <!--(if cls.init)-->
-        [Test]
-        [Category("P2")]
-        [Description("Create a ${cls.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$ C")]
-        [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "CONSTN")]
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public void ${cls.name.replace(".", "_")}$_CONSTRUCTOR_TEST()
-        {
-            Assert.Throws<Efl.EflException>(() => new ${name_helpers.class_managed_name(cls)}$(););
-        }
+ tct_constructor_null.template
  <!--(end)-->
-
-        [Test]
-        [Category("P1")]
-        [Description("Create a ${cls.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$ C")]
-        [Property("SPEC_URL", "-")]
-${m_show(mshow=cls.criteria_custom,mdefault='        [Property("CRITERIA", "CONSTR")]')}$#!
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public void ${cls.name.replace(".", "_")}$_CONSTRUCTOR_TEST()
-        {
-            Assert.IsInstanceOf<${name_helpers.class_managed_name(cls)}$>(obj, "Should Return ${name_helpers.class_managed_name(cls)}$ Instance");
-        }
+ <!--(include)-->
+ tct_constructor.template
+ <!--(end)-->
 #!  METHODS
  <!--(for func in cls.methods)-->
-
-        [Test]
-        [Category("P1")]
-        [Description("Calling method ${func.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ MR")]
-        [Property("SPEC_URL", "-")]
-${m_show(mshow=func.criteria_custom,mdefault='        [Property("CRITERIA", "MR")]')}$#!
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public void ${func.name}$_METHOD_CALL()
-        {
-${def_params(parameters=func.parameters)}$
-${m_show(mshow=func.arg_init)}$#!
-${m_show(mshow=func.init)}$#!
-            /* CALLING METHOD  */
-            try
-            {
-            <!--(if func.method_return_type)-->var r = <!--(end)-->${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$);
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail("Should not throw exception. " + ex.ToString());
-            }
-${m_show(mshow=func.arg_shutdown)}$#!
-${m_show(mshow=func.shutdown)}$#!
-        }
-
-        [Test]
-        [Category("P2")]
-        [Description("Calling method ${func.name}$ Exception.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ M")]
-        [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "MEX")]
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public void ${func.name}$_METHOD_EXCEPTION()
-        {
-${def_params(parameters=func.parameters)}$
-${m_show(mshow=func.mex_arg_init)}$#!
-${m_show(mshow=func.mex_init)}$#!
-            /* CALLING METHOD  */
-            Assert.Throws<Efl.EflException>(() => ${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$));
-${m_show(mshow=func.mex_arg_shutdown)}$#!
-${m_show(mshow=func.mex_shutdown)}$#!
-        }
-
+   <!--(include)-->
+   tct_method_call.template
+   <!--(end)-->
+   <!--(include)-->
+   tct_method_exception.template
+   <!--(end)-->
    <!--(for argenum in filter(func.is_enum, func.parameters))-->
-
-        [Test]
-        [Category("P1")]
-        [Description("Calling method Enum ${func.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ M")]
-        [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "MAE")]
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-     <!--(for field in argenum.type.typedecl.enum_fields)-->
-        public void ${func.name}$_${argenum.name}$_ENUM_${field.c_constant}$()
-        {
-${def_params(parameters=func.parameters)}$
-${m_show(mshow=func.arg_init)}$#!
-${m_show(mshow=func.init)}$#!
-            /* CALLING METHOD  */
-            arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${name_helpers.enum_field_managed_name(field)}$;
-            <!--(if func.method_return_type)-->var r = <!--(end)-->${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$);
-${m_show(mshow=func.arg_shutdown)}$#!
-${m_show(mshow=func.shutdown)}$#!
-        }
+     <!--(include)-->
+     tct_method_enum.template
      <!--(end)-->
    <!--(end)-->
    <!--(if next(filter(func.is_number, func.parameters), False))-->
-
-        [Test]
-        [Category("P1")]
-        [Description("Calling method in Range ${func.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ M")]
-        [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "MAR")]
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public void ${func.name}$_IN_RANGE ()
-        {
-${def_params(parameters=func.parameters)}$
-${m_show(mshow=func.arg_init)}$#!
-${m_show(mshow=func.init)}$#!
-     <!--(if func.irange_init)-->
-${m_show(mshow=func.irange_init)}$#!
-     <!--(else)-->
-       <!--(for arg in filter(func.is_number, func.parameters))-->
-            arg_${arg.name}$ = 1;
-       <!--(end)-->
+     <!--(include)-->
+     tct_method_in_out_range.template
      <!--(end)-->
-            /* CALLING METHOD  */
-            <!--(if func.method_return_type)-->var r = <!--(end)-->${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$);
-
-${m_show(mshow=func.arg_shutdown)}$#!
-${m_show(mshow=func.shutdown)}$#!
-        }
-        public void ${func.name}$_OUT_OF_RANGE ()
-        {
-${def_params(parameters=func.parameters)}$
-${m_show(mshow=func.arg_init)}$#!
-${m_show(mshow=func.init)}$#!
-     <!--(if func.orange_init)-->
-${m_show(mshow=func.orange_init)}$#!
-     <!--(else)-->
-       <!--(for arg in filter(func.is_number, func.parameters))-->
-            arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MaxValue;
-       <!--(end)-->
-     <!--(end)-->
-            /* CALLING METHOD  */
-            <!--(if func.method_return_type)-->var r = <!--(end)-->${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$);
-${m_show(mshow=func.arg_shutdown)}$#!
-${m_show(mshow=func.shutdown)}$#!
-        }
-
    <!--(end)-->
  <!--(end)--> #!  METHODS END
 #!  PROPERTIES FUNCTION GET
  <!--(for func in cls.properties)-->
   <!--(if func.has_getter)-->
-        [Test]
-        [Category("P1")]
-        [Description("Calling Property Get ${func.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ A")]
-        [Property("SPEC_URL", "-")]
-${m_show(mshow=func.get_criteria_custom,mdefault='        [Property("CRITERIA", "PRO")]')}$#!
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public void ${func.name}$_PROPERTY_GET()
-        {
-${def_params(parameters=func.getter_args, prefix="get_arg_")}$
-${m_show(mshow=func.arg_get_init)}$#!
-${m_show(mshow=func.get_init)}$#!
-            /* CALLING PROPERTY  */
-            try
-            {
-${callget()}$
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail("Should not throw exception. " + ex.ToString());
-            }
-   <!--(for p in func.getter_values)-->
-            Assert.NotNull(get_arg_${p.name}$, "${p.name}$ should be readable");
-            Assert.IsInstanceOf<${suite.type_convert(p.type)}$>(get_arg_${p.name}$);
-   <!--(end)-->
-${m_show(mshow=func.arg_get_shutdown)}$#!
-${m_show(mshow=func.get_shutdown)}$#!
-        }
-
+    <!--(include)-->
+    tct_prop_get_value.template
+    <!--(end)-->
     <!--(for argenum in filter(func.is_enum, func.getter_keys))-->
-        [Test]
-        [Category("P1")]
-        [Description("Calling Property Get Enum ${func.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_get M")]
-        [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "MAE")]
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-     <!--(for field in argenum.type.typedecl.enum_fields)-->
-        public void ${func.name}$_${argenum.name}$_ENUM_GET_${field.c_constant}$()
-        {
-${def_params(parameters=func.getter_args, prefix="get_arg_")}$
-${m_show(mshow=func.arg_get_init)}$#!
-${m_show(mshow=func.get_init)}$#!
-            /* CALLING PROPERTY  */
-            get_arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${name_helpers.enum_field_managed_name(field)}$;
-${callget()}$
-        <!--(for p in func.getter_values)-->
-            Assert.NotNull(get_arg_${p.name}$, "${p.name}$ should be readable");
-        <!--(end)-->
-${m_show(mshow=func.arg_get_shutdown)}$#!
-${m_show(mshow=func.get_shutdown)}$#!
-        }
-     <!--(end)-->
+       <!--(include)-->
+       tct_prop_get_enum.template
+       <!--(end)-->
     <!--(end)-->
     <!--(if next(filter(func.is_number, func.getter_keys), False))-->
-        [Test]
-        [Category("P1")]
-        [Description("Calling Property Get Max Value ${func.name}$.")]
-        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_get A")]
-        [Property("SPEC_URL", "-")]
-        [Property("CRITERIA", "PMAX")]
-        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public void ${func.name}$_get_MAX_VALUE()
-        {
-${def_params(parameters=func.getter_args, prefix="get_arg_")}$
-${m_show(mshow=func.arg_get_init)}$#!
-${m_show(mshow=func.get_init)}$#!
-     <!--(if func.pmax_init)-->
-${m_show(mshow=func.pmax_init)}$#!
-     <!--(else)-->
-       <!--(for arg in filter(func.is_number, func.getter_keys))-->
-            get_arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MaxValue;
-       <!--(end)-->
+     <!--(include)-->
+     tct_prop_get_max_value.template
      <!--(end)-->
-            /* CALLING PROPERTY  */
-${callget()}$
-       <!--(for p in func.getter_values)-->
-            Assert.NotNull(get_arg_${p.name}$, "${p.name}$ should be readable");
-       <!--(end)-->
-${m_show(mshow=func.arg_get_shutdown)}$#!
-${m_show(mshow=func.get_shutdown)}$#!
-        }
-
      <!--(include)-->
      tct_prop_get_min_value.template
      <!--(end)-->

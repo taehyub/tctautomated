@@ -1,0 +1,12 @@
+        [Test]
+        [Category("P2")]
+        [Description("Create a ${cls.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$ C")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "CONSTN")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${cls.name.replace(".", "_")}$_CONSTRUCTOR_TEST()
+        {
+            Assert.Throws<Efl.EflException>(() => new ${name_helpers.class_managed_name(cls)}$(););
+        }
+

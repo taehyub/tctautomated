@@ -1,0 +1,29 @@
+        [Test]
+        [Category("P1")]
+        [Description("Calling Property Get ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ A")]
+        [Property("SPEC_URL", "-")]
+${m_show(mshow=func.get_criteria_custom,mdefault='        [Property("CRITERIA", "PRO")]')}$#!
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${func.name}$_PROPERTY_GET()
+        {
+${def_params(parameters=func.getter_args, prefix="get_arg_")}$
+${m_show(mshow=func.arg_get_init)}$#!
+${m_show(mshow=func.get_init)}$#!
+            /* CALLING PROPERTY  */
+            try
+            {
+${callget()}$
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Should not throw exception. " + ex.ToString());
+            }
+   <!--(for p in func.getter_values)-->
+            Assert.NotNull(get_arg_${p.name}$, "${p.name}$ should be readable");
+            Assert.IsInstanceOf<${suite.type_convert(p.type)}$>(get_arg_${p.name}$);
+   <!--(end)-->
+${m_show(mshow=func.arg_get_shutdown)}$#!
+${m_show(mshow=func.get_shutdown)}$#!
+        }
+

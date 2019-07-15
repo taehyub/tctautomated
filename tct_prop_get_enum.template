@@ -1,0 +1,23 @@
+        [Test]
+        [Category("P1")]
+        [Description("Calling Property Get Enum ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$_get M")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "MAE")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+     <!--(for field in argenum.type.typedecl.enum_fields)-->
+        public void ${func.name}$_${argenum.name}$_ENUM_GET_${field.c_constant}$()
+        {
+${def_params(parameters=func.getter_args, prefix="get_arg_")}$
+${m_show(mshow=func.arg_get_init)}$#!
+${m_show(mshow=func.get_init)}$#!
+            /* CALLING PROPERTY  */
+            get_arg_${argenum.name}$ = ${suite.type_convert(argenum.type)}$.${name_helpers.enum_field_managed_name(field)}$;
+${callget()}$
+        <!--(for p in func.getter_values)-->
+            Assert.NotNull(get_arg_${p.name}$, "${p.name}$ should be readable");
+        <!--(end)-->
+${m_show(mshow=func.arg_get_shutdown)}$#!
+${m_show(mshow=func.get_shutdown)}$#!
+        }
+     <!--(end)-->

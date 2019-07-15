@@ -1,0 +1,19 @@
+
+        [Test]
+        [Category("P2")]
+        [Description("Calling method ${func.name}$ Exception.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ M")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "MEX")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${func.name}$_METHOD_EXCEPTION()
+        {
+${def_params(parameters=func.parameters)}$
+${m_show(mshow=func.mex_arg_init)}$#!
+${m_show(mshow=func.mex_init)}$#!
+            /* CALLING METHOD  */
+            Assert.Throws<Efl.EflException>(() => ${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$));
+${m_show(mshow=func.mex_arg_shutdown)}$#!
+${m_show(mshow=func.mex_shutdown)}$#!
+        }
+

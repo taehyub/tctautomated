@@ -1,0 +1,12 @@
+
+        [Test]
+        [Category("P1")]
+        [Description("Create a ${cls.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$ C")]
+        [Property("SPEC_URL", "-")]
+${m_show(mshow=cls.criteria_custom,mdefault='        [Property("CRITERIA", "CONSTR")]')}$#!
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${cls.name.replace(".", "_")}$_CONSTRUCTOR_TEST()
+        {
+            Assert.IsInstanceOf<${name_helpers.class_managed_name(cls)}$>(obj, "Should Return ${name_helpers.class_managed_name(cls)}$ Instance");
+        }

@@ -1,0 +1,43 @@
+        [Test]
+        [Category("P1")]
+        [Description("Calling method in Range ${func.name}$.")]
+        [Property("SPEC", "${suite.name}$.${cls.name}$.${func.name}$ M")]
+        [Property("SPEC_URL", "-")]
+        [Property("CRITERIA", "MAR")]
+        [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
+        public void ${func.name}$_IN_RANGE ()
+        {
+${def_params(parameters=func.parameters)}$
+${m_show(mshow=func.arg_init)}$#!
+${m_show(mshow=func.init)}$#!
+     <!--(if func.irange_init)-->
+${m_show(mshow=func.irange_init)}$#!
+     <!--(else)-->
+       <!--(for arg in filter(func.is_number, func.parameters))-->
+            arg_${arg.name}$ = 1;
+       <!--(end)-->
+     <!--(end)-->
+            /* CALLING METHOD  */
+            <!--(if func.method_return_type)-->var r = <!--(end)-->${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$);
+
+${m_show(mshow=func.arg_shutdown)}$#!
+${m_show(mshow=func.shutdown)}$#!
+        }
+        public void ${func.name}$_OUT_OF_RANGE ()
+        {
+${def_params(parameters=func.parameters)}$
+${m_show(mshow=func.arg_init)}$#!
+${m_show(mshow=func.init)}$#!
+     <!--(if func.orange_init)-->
+${m_show(mshow=func.orange_init)}$#!
+     <!--(else)-->
+       <!--(for arg in filter(func.is_number, func.parameters))-->
+            arg_${arg.name}$ = ${suite.type_convert(arg.type)}$.MaxValue;
+       <!--(end)-->
+     <!--(end)-->
+            /* CALLING METHOD  */
+            <!--(if func.method_return_type)-->var r = <!--(end)-->${meth_target(func=func, cls=cls)}$.${func.format_name}$(${', '.join([ suite.print_arg(p) for p in func.parameters])}$);
+${m_show(mshow=func.arg_shutdown)}$#!
+${m_show(mshow=func.shutdown)}$#!
+        }
+
