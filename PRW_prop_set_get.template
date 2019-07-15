@@ -37,6 +37,11 @@ ${callget()}$
             Assert.IsInstanceOf<${suite.type_convert(p.type)}$>(get_arg_${p.name}$);
    <!--(end)-->
 
+   /* Check set values */
+   <!--(for name in suite.intersect([x.name for x in func.getter_values], [y.name for y in func.setter_args]))-->
+            Assert.AreEqual(arg_${name}$, get_arg_${name}$, "Value of ${name}$ from getter is diferent from value set.");
+   <!--(end)-->
+
 ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
 
