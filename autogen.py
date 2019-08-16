@@ -182,6 +182,7 @@ if __name__ == "__main__":
         "Efl.Ui.Internal_Text_Scroller",
         "Efl.Ui.Selection_Manager",
         "Efl.Ui.Spotlight.Manager_Plain",
+        "Efl.Ui.Collection_Focus_Manager",
     ]
     nsbl = [
         "Elm",
