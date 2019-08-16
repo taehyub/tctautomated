@@ -15,7 +15,7 @@ ${mdefault}$
  <!--(end)-->
 <!--(end)-->
 <!--(macro meth_target)-->
- <!--(if func.is_class)-->${name_helpers.class_managed_name(cls)}$<!--(else)-->obj<!--(end)-->
+ <!--(if func.is_static)-->${name_helpers.class_managed_name(cls)}$<!--(else)-->obj<!--(end)-->
 <!--(end)-->
 <!--(macro callget)-->
   <!--(if not func.getter_return_type and len(list(func.getter_values)) == 1)-->
