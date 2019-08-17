@@ -8,6 +8,8 @@ from copy import copy
 import itertools
 import argparse
 
+import blacklist
+
 parser = argparse.ArgumentParser(description="TCTautomated.")
 parser.add_argument(
     "--name", "-n", default="tct", help="Test name and where look custom files."
@@ -97,30 +99,21 @@ class Template(pyratemp.Template):
 if __name__ == "__main__":
 
     def _load_class(eocls):
-        if (
-            eocls
-            and eocls.type == eocls.type.REGULAR
-            and not eocls.name in blacklist
-            and not list(eocls.namespaces)[0] in nsbl
-            and not eocls.namespace in nsbl
-            and not eocls.name[-6:] == "Legacy"
-        ):
-            name = "_".join([args.name, eocls.name.replace(".", "_")])
-            suite = suitegen.SuiteGen(
-                args.name,
-                name,
-                "{}.cs".format(os.path.join(args.dir, name)),
-                args.name,
-                "tct_suite.template",
-            )
-            suite.loadObj(eocls)
-            t = Template(suite.template)
-            t.render(suite)
+        if blacklist.is_skipped_class(eocls):
+            return
 
-    #            try:
-    #                t.render(suite)
-    #            except:
-    #                print("ERROR RENDERING - Cannot create file: {}".format(suite.filename))
+        name = "_".join([args.name, eocls.name.replace(".", "_")])
+        suite = suitegen.SuiteGen(
+            args.name,
+            name,
+            "{}.cs".format(os.path.join(args.dir, name)),
+            args.name,
+            "tct_suite.template",
+        )
+        suite.loadObj(eocls)
+        t = Template(suite.template)
+        t.render(suite)
+
 
     # Use .eo files from the source tree (not the installed ones)
     SCAN_FOLDER = os.path.join(root_path, "src", "lib")
@@ -150,52 +143,6 @@ if __name__ == "__main__":
 
     atexit.register(cleanup_db)
 
-    blacklist = [
-        "Efl.Ui.Internal.Text.Interactive",
-        "Efl.Canvas.Gesture_Manager",
-        "Efl.Canvas.Gesture_Touch",
-        "Efl.Canvas.Gesture_Tap",
-        "Efl.Canvas.Gesture_Long_Tap",
-        "Efl.Canvas.Gesture_Recognizer_Tap",
-        "Efl.Canvas.Gesture_Recognizer_Long_Tap",
-        "Efl.Canvas.Layout_Part_Invalid",
-        "Efl.Canvas.Scene3d",
-        "Efl.Canvas.Text",
-        "Efl.Canvas.Vg.Object",
-        "Efl.Canvas.Video",
-        "Edje.Global",
-        "Efl.Net.Ssl.Context",
-        "Efl.Datetime.Manager",
-        "Efl.Selection_Manager",
-        "Elm_Actionslider.Part",
-        "Elm_Bubble.Part",
-        "Elm_Label.Part",
-        "Efl.Ui.Model_State",
-        "Efl.Ui.Popup_Part_Backwall",
-        "Efl.Ui.View_List_Precise_Layouter",
-        "Efl.Ui.Average_Model",
-        "Efl.Ui.Exact_Model",
-        "Efl.Ui.Homogeneous_Model",
-        "Efl.Ui.Size_Model",
-        "Efl.Ui.State_Model",
-        "Efl.Ui.List_View_Precise_Layouter",
-        "Efl.Ui.Internal_Text_Scroller",
-        "Efl.Ui.Selection_Manager",
-        "Efl.Ui.Spotlight.Manager_Plain",
-        "Efl.Ui.Collection_Focus_Manager",
-    ]
-    nsbl = [
-        "Elm",
-        "Ecore",
-        "Ector",
-        "Eio",
-        "Eldbus",
-        "Evas",
-        "Efl.Io",
-        "Efl.Net",
-        "Efl.Net.Control",
-        "Efl.Ui.Focus",
-    ]
     if args.cls:
         eocls = eolian_db.class_by_name_get(args.cls)
         if not eocls:
