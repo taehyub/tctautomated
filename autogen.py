@@ -96,7 +96,7 @@ class Template(pyratemp.Template):
                 f.write(output)
 
 
-if __name__ == "__main__":
+def main():
 
     def _load_class(eocls):
         if blacklist.is_skipped_class(eocls):
@@ -113,7 +113,6 @@ if __name__ == "__main__":
         suite.loadObj(eocls)
         t = Template(suite.template)
         t.render(suite)
-
 
     # Use .eo files from the source tree (not the installed ones)
     SCAN_FOLDER = os.path.join(root_path, "src", "lib")
@@ -151,3 +150,8 @@ if __name__ == "__main__":
     else:
         for eocls in eolian_db.classes:
             _load_class(eocls)
+
+
+if __name__ == "__main__":
+    main()
+
