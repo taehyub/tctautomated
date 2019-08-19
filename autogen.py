@@ -134,15 +134,6 @@ def main():
     if not eolian_db.all_eo_files_parse():
         raise (RuntimeError("Eolian, failed to parse all EO files"))
 
-    # cleanup the database on exit
-    import atexit
-
-    def cleanup_db():
-        global eolian_db
-        del eolian_db
-
-    atexit.register(cleanup_db)
-
     if args.cls:
         eocls = eolian_db.class_by_name_get(args.cls)
         if not eocls:
@@ -151,6 +142,8 @@ def main():
     else:
         for eocls in eolian_db.classes:
             _load_class(eocls)
+
+    del eolian_db
 
 
 if __name__ == "__main__":
