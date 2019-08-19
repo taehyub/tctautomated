@@ -4,8 +4,6 @@
 import os
 import sys
 import datetime
-from copy import copy
-import itertools
 import argparse
 
 import blacklist
@@ -39,15 +37,11 @@ except ModuleNotFoundError as ex:
     if args.verbose:
         print(ex)
     print(
-        "Efl root path not found, use EFL_DIR environment variable with efl root path in your system\n"
+        "Efl root path not found, use EFL_DIR environment variable "
+        "with efl root path in your system\n"
     )
     parser.print_help()
     sys.exit(-1)
-
-
-"""
-It will find methods and functions with owned return and without other params
-"""
 
 
 class Template(pyratemp.Template):
@@ -82,7 +76,7 @@ class Template(pyratemp.Template):
             eval_class=eval_class,
         )
 
-    def render(self, suite, verbose=True):
+    def render(self, suite):
         # Build the context for the template
         ctx = {}
         ctx["suite"] = suite
@@ -97,55 +91,58 @@ class Template(pyratemp.Template):
                 f.write(output)
 
 
+def load_class(eocls):
+    """Loads data for the given class and generate tests"""
+
+    if blacklist.should_skip_class(eocls):
+        return
+
+    name = "_".join([args.name, eocls.name.replace(".", "_")])
+    suite = suitegen.SuiteGen(
+        args.name,
+        name,
+        "{}.cs".format(os.path.join(args.dir, name)),
+        args.name,
+        "tct_suite.template",
+    )
+    suite.loadObj(eocls)
+    t = Template(suite.template)
+    t.render(suite)
+
+
 def main():
-
-    def _load_class(eocls):
-        if blacklist.is_skipped_class(eocls):
-            return
-
-        name = "_".join([args.name, eocls.name.replace(".", "_")])
-        suite = suitegen.SuiteGen(
-            args.name,
-            name,
-            "{}.cs".format(os.path.join(args.dir, name)),
-            args.name,
-            "tct_suite.template",
-        )
-        suite.loadObj(eocls)
-        t = Template(suite.template)
-        t.render(suite)
+    """Main entry point"""
 
     # Use .eo files from the source tree (not the installed ones)
-    SCAN_FOLDER = os.path.join(root_path, "src", "lib")
+    scan_folder = os.path.join(root_path, "src", "lib")
 
     # create main eolian state
     eolian_db = eolian.Eolian_State()
     if not isinstance(eolian_db, eolian.Eolian_State):
-        raise (RuntimeError("Eolian, failed to create Eolian state"))
+        raise RuntimeError("Eolian, failed to create Eolian state")
 
     # eolian source tree scan
-    if not eolian_db.directory_add(SCAN_FOLDER):
-        raise (RuntimeError("Eolian, failed to scan source directory"))
+    if not eolian_db.directory_add(scan_folder):
+        raise RuntimeError("Eolian, failed to scan source directory")
 
     # Parse all known eo files
     if not eolian_db.all_eot_files_parse():
-        raise (RuntimeError("Eolian, failed to parse all EOT files"))
+        raise RuntimeError("Eolian, failed to parse all EOT files")
 
     if not eolian_db.all_eo_files_parse():
-        raise (RuntimeError("Eolian, failed to parse all EO files"))
+        raise RuntimeError("Eolian, failed to parse all EO files")
 
     if args.cls:
         eocls = eolian_db.class_by_name_get(args.cls)
         if not eocls:
             print("Eolian class {} Not found!!".format(args.cls))
-        _load_class(eocls)
+        load_class(eocls)
     else:
         for eocls in eolian_db.classes:
-            _load_class(eocls)
+            load_class(eocls)
 
     del eolian_db
 
 
 if __name__ == "__main__":
     main()
-
