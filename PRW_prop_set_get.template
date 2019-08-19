@@ -1,3 +1,4 @@
+<!--(if not skips.should_skip_method(cls, func, "PRW"))-->
         [Test]
         [Category("P1")]
         [Description("Calling Property Set ${func.name}$.")]
@@ -48,4 +49,4 @@ ${m_show(mshow=func.get_shutdown)}$#!
 ${m_show(mshow=func.arg_set_shutdown)}$#!
 ${m_show(mshow=func.set_shutdown)}$#!
         }
-
+<!--(end)-->

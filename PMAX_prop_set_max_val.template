@@ -1,3 +1,4 @@
+<!--(if not skips.should_skip_method(cls, func, "PMAX"))-->
         [Test]
         [Category("P1")]
         [Description("Calling Property Set Max Value ${func.name}$.")]
@@ -22,3 +23,4 @@ ${m_show(mshow=func.pmax_init)}$#!
 ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
         }
+<!--(end)-->

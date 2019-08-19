@@ -1,3 +1,4 @@
+<!--(if not skips.should_skip_method(cls, func, "PRO"))-->
         [Test]
         [Category("P1")]
         [Description("Calling Property Get ${func.name}$.")]
@@ -26,4 +27,4 @@ ${callget()}$
 ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
         }
-
+<!--(end)-->

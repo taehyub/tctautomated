@@ -1,3 +1,4 @@
+<!--(if not skips.should_skip_method(cls, func, "PRE"))-->
         [Test]
         [Category("P1")]
         [Description("Calling Property Get Enum ${func.name}$.")]
@@ -21,3 +22,4 @@ ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
         }
      <!--(end)-->
+<!--(end)-->

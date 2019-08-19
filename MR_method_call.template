@@ -1,4 +1,4 @@
-
+<!--(if not skips.should_skip_method(cls, func, "MR"))-->
         [Test]
         [Category("P1")]
         [Description("Calling method ${func.name}$.")]
@@ -24,3 +24,4 @@ ${m_show(mshow=func.arg_shutdown)}$#!
 ${m_show(mshow=func.shutdown)}$#!
         }
 
+<!--(end)-->

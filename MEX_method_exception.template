@@ -1,4 +1,4 @@
-
+<!--(if not skips.should_skip_method(cls, func, "MEX"))-->
         [Test]
         [Category("P2")]
         [Description("Calling method ${func.name}$ Exception.")]
@@ -16,4 +16,4 @@ ${m_show(mshow=func.mex_init)}$#!
 ${m_show(mshow=func.mex_arg_shutdown)}$#!
 ${m_show(mshow=func.mex_shutdown)}$#!
         }
-
+<!--(end)-->

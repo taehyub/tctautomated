@@ -87,6 +87,7 @@ class Template(pyratemp.Template):
         ctx = {}
         ctx["suite"] = suite
         ctx["name_helpers"] = name_helpers
+        ctx["skips"] = blacklist
         # render with the augmented context
         output = self(**ctx)
 

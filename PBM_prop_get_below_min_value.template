@@ -1,3 +1,4 @@
+<!--(if not skips.should_skip_method(cls, func, "PBM"))-->
         [Test]
         [Category("P1")]
         [Description("Calling Property Get Below Min Value ${func.name}$.")]
@@ -19,4 +20,4 @@ ${callget()}$
 ${m_show(mshow=func.arg_get_shutdown)}$#!
 ${m_show(mshow=func.get_shutdown)}$#!
         }
-
+<!--(end)-->

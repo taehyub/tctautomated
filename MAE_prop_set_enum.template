@@ -1,3 +1,4 @@
+<!--(if not skips.should_skip_method(cls, func, "MAE"))-->
         [Test]
         [Category("P1")]
         [Description("Calling Property Set Enum ${func.name}$.")]
@@ -18,3 +19,4 @@ ${m_show(mshow=func.arg_set_shutdown)}$#!
 ${m_show(mshow=func.set_shutdown)}$#!
         }
      <!--(end)-->
+<!--(end)-->

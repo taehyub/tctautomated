@@ -1,3 +1,4 @@
+<!--(if not skips.should_skip_event(cls, event, "EVENT"))-->
         [Test]
         [Category("P1")]
         [Description("Calling Event ${event.name}$.")]
@@ -20,3 +21,4 @@ ${m_show(mshow=event.custom)}$#!
 ${m_show(mshow=event.shutdown)}$#!
      <!--(end)-->
         }
+<!--(end)-->
