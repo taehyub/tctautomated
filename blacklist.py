@@ -80,7 +80,19 @@ SKIP_LIST = set(
     [
         ("*", "Efl.Ui.Popup", "Efl.Ui.Focus.Manager", "*"),
         ("*", "Efl.Ui.Popup", "Efl.Ui.Focus.Layer", "*"),
+        ("*", "Efl.Ui.Button", "Efl.Ui.L10n", "*"),
+        ("*", "Efl.Ui.Image", "Efl.File", "*"),
+        ("*", "Efl.Ui.Text", "Efl.File", "*"),
     ]
+)
+
+ALLOW_LIST = set(
+     [
+        ("*", "Efl.Ui.Image", "Efl.File", "efl_file_load"),
+        ("*", "Efl.Ui.Image", "Efl.File", "efl_file_unload"),
+        ("*", "Efl.Ui.Text", "Efl.File", "efl_file_load"),
+        ("*", "Efl.Ui.Text", "Efl.File", "efl_file_get"),
+     ]
 )
 
 
@@ -115,6 +127,9 @@ def query(criteria, target_class, declaring_class, c_name):
     )
 
     if not queries.isdisjoint(SKIP_LIST):
+        if not queries.isdisjoint(ALLOW_LIST):
+              print("Allowing", criteria, target_class, declaring_class, c_name)
+              return False
         print("Skipping", criteria, target_class, declaring_class, c_name)
         return True
 
