@@ -5,7 +5,7 @@
         [Property("SPEC_URL", "-")]
         [Property("CRITERIA", "MAR")]
         [Property("AUTHOR", "AutomaTest Boot, tct@automated")]
-        public void ${func.name}$_IN_RANGE ()
+        public void ${func.name}$_IN_RANGE()
         {
 ${def_params(parameters=func.parameters)}$
 ${m_show(mshow=func.arg_init)}$#!
@@ -23,7 +23,7 @@ ${m_show(mshow=func.irange_init)}$#!
 ${m_show(mshow=func.arg_shutdown)}$#!
 ${m_show(mshow=func.shutdown)}$#!
         }
-        public void ${func.name}$_OUT_OF_RANGE ()
+        public void ${func.name}$_OUT_OF_RANGE()
         {
 ${def_params(parameters=func.parameters)}$
 ${m_show(mshow=func.arg_init)}$#!
